@@ -1,3 +1,4 @@
+import re
 from enum import Enum, auto
 
 
@@ -10,6 +11,7 @@ class EventType(Enum):
     INTENTIONAL_WALK = auto()
     HBP = auto()
     STRIKEOUT = auto()
+    STRIKEOUT_REACHED = auto()
     GROUNDOUT = auto()
     FLYOUT = auto()
     LINEOUT = auto()
@@ -48,26 +50,29 @@ EXACT_CODE_TABLE = {
     "사구": EventType.HBP,
     "삼진": EventType.STRIKEOUT,
     "낫아웃-": EventType.STRIKEOUT,
-    "낫아웃+": EventType.STRIKEOUT,
+    "낫아웃+": EventType.STRIKEOUT_REACHED,
     "병살": EventType.DOUBLE_PLAY,
-    "유땅병살": EventType.DOUBLE_PLAY,
     "희타": EventType.SAC_BUNT,
     "희비": EventType.SAC_BUNT,
-    "투야선": EventType.FIELDERS_CHOICE,
-    "3야선": EventType.FIELDERS_CHOICE,
+    "투희번": EventType.SAC_BUNT,
     "실책": EventType.ERROR,
     "송구실책": EventType.ERROR,
+    "포구실책": EventType.ERROR,
+    "타구맞음": EventType.ERROR,
+    "2루타": EventType.HIT_DOUBLE,
     "도루": EventType.STOLEN_BASE,
     "도루자": EventType.CAUGHT_STEALING,
     "주자아웃": EventType.RUNNER_OUT,
     "견제사": EventType.RUNNER_OUT,
     "런다운": EventType.RUNNER_OUT,
+    "주루방해": EventType.RUNNER_OUT,
     "폭투": EventType.WILD_PITCH,
     "보크": EventType.BALK,
     "포일": EventType.PASSED_BALL,
     "타격방해": EventType.CATCHER_INTERFERENCE,
     "대주자": EventType.NOT_A_PLATE_APPEARANCE,
     "대수비": EventType.NOT_A_PLATE_APPEARANCE,
+    "대타": EventType.NOT_A_PLATE_APPEARANCE,
 }
 
 HOME_RUN_SUFFIXES = ("홈",)
@@ -80,18 +85,36 @@ FLY_OUT_SUFFIX = "플"
 SAC_FLY_INFIX = "희플"
 LINE_OUT_SUFFIX = "직"
 ERROR_SUFFIX = "실"
+DOUBLE_PLAY_SUFFIX = "병살"
+FIELDERS_CHOICE_SUFFIX_YASEON = "야선"
+BRACKET_TAG_PATTERN = re.compile(r"\[[^\]]*\]$")
 
 
 def parse_cell(cell_text: str) -> list:
     if not cell_text:
         return []
-    normalized = cell_text.replace("/", ",")
-    return [part.strip() for part in normalized.split(",") if part.strip()]
+    return [part.strip() for part in cell_text.split(",") if part.strip()]
+
+
+def split_plate_appearances(cell_text: str) -> list:
+    """A single inning cell can contain multiple plate appearances by the
+    same lineup slot when the batting order wraps around within one inning
+    (e.g. a big-scoring inning). gameone.kr separates those with "/",
+    while "," separates multiple events within a single plate appearance."""
+    if not cell_text:
+        return []
+    return [seg.strip() for seg in cell_text.split("/") if seg.strip()]
 
 
 def classify(code: str) -> EventType:
+    code = BRACKET_TAG_PATTERN.sub("", code).strip()
+
     if code in EXACT_CODE_TABLE:
         return EXACT_CODE_TABLE[code]
+    if code.endswith(DOUBLE_PLAY_SUFFIX):
+        return EventType.DOUBLE_PLAY
+    if code.endswith(FIELDERS_CHOICE_SUFFIX_YASEON):
+        return EventType.FIELDERS_CHOICE
     if code.endswith(SAC_FLY_INFIX) or code == "유희플":
         return EventType.SAC_FLY
     if code.endswith(FIELDERS_CHOICE_SUFFIX):

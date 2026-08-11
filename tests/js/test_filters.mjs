@@ -79,4 +79,23 @@ assert.strictEqual(
 assert.strictEqual(normalizeVenue("구의 야구장"), "구의야구장");
 assert.strictEqual(normalizeVenue("살곶이야구장"), "살곶이야구장");
 
+// grouped league checkbox: buildFilterState flattens a checked box's
+// JSON-array value (e.g. "서울시민리그" covering both "생활체육서울시민리그"
+// and "서울시민리그(S-리그)") into filterState.leagues, so matchesFilter
+// just needs both names present to match either season's record
+assert.strictEqual(
+  matchesFilter(
+    { ...baseRecord, league: "생활체육서울시민리그" },
+    { outs: [], runnerStates: [], rispOnly: false, seasons: [], leagues: ["생활체육서울시민리그", "서울시민리그(S-리그)"], venueGroups: [] }
+  ),
+  true
+);
+assert.strictEqual(
+  matchesFilter(
+    { ...baseRecord, league: "서울시민리그(S-리그)" },
+    { outs: [], runnerStates: [], rispOnly: false, seasons: [], leagues: ["생활체육서울시민리그", "서울시민리그(S-리그)"], venueGroups: [] }
+  ),
+  true
+);
+
 console.log("all filter tests passed");

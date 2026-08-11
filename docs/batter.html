@@ -102,7 +102,7 @@
     import { loadJSON } from "./js/data-loader.js";
     import { computeBatterStats, groupByPlayer } from "./js/batter-page.js";
     import { sortEntries, nextSortState } from "./js/table-sort.js";
-    import { leagueCheckboxLabel } from "./js/league-label.js";
+    import { groupLeaguesForCheckboxes } from "./js/league-label.js";
 
     let allRecords = [];
     let sortState = { key: "PA", direction: "desc" };
@@ -147,10 +147,19 @@
 
     function populateLeagueCheckboxes(records) {
       const leagues = Array.from(new Set(records.map((r) => r.league))).sort();
+      const groups = groupLeaguesForCheckboxes(leagues);
       const container = document.getElementById("leagueCheckboxes");
-      container.innerHTML = leagues
-        .map((l) => `<label><input type="checkbox" name="league" value="${l}" /> ${leagueCheckboxLabel(l)}</label>`)
-        .join("");
+      container.innerHTML = "";
+      for (const group of groups) {
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = "league";
+        input.value = JSON.stringify(group.members);
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(` ${group.label}`));
+        container.appendChild(label);
+      }
     }
 
     function populateVenueGroups(records) {

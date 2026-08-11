@@ -7,7 +7,7 @@ function buildFilterState(formElement) {
   const seasons = Array.from(formElement.querySelectorAll('input[name="season"]:checked'))
     .map((el) => parseInt(el.value, 10));
   const leagues = Array.from(formElement.querySelectorAll('input[name="league"]:checked'))
-    .map((el) => el.value);
+    .flatMap((el) => JSON.parse(el.value));
   const venueGroupSelect = formElement.querySelector('select[name="venueGroup"]');
   const venueGroups = venueGroupSelect && venueGroupSelect.value
     ? [JSON.parse(venueGroupSelect.value)]

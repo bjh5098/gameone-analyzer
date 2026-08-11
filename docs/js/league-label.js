@@ -29,6 +29,41 @@ const VENUE_ONLY_CHECKBOX_LABELS = {
   "원외리그": "성동원외리그",
 };
 
+// 시즌에 따라 리그명 표기가 바뀌었을 뿐 동일한 리그인 경우(사용자 확인).
+// "생활체육서울시민리그"(2024)와 "서울시민리그(S-리그)"(2025)는 하나의
+// 체크박스로 묶어 "서울시민리그"로 표시한다.
+const LEAGUE_GROUPS = [
+  {
+    label: "서울시민리그",
+    members: ["생활체육서울시민리그", "서울시민리그(S-리그)"],
+  },
+];
+
+function findLeagueGroup(league) {
+  return LEAGUE_GROUPS.find((group) => group.members.includes(league));
+}
+
+// records에 등장하는 원본 리그명 목록을 체크박스 단위로 그룹핑한다.
+// 반환값 각 항목은 { label, members } - members는 필터링에 쓸 원본
+// 리그명 배열(그룹이 아니면 항목 1개), label은 화면에 표시할 텍스트.
+function groupLeaguesForCheckboxes(leagues) {
+  const seenGroupLabels = new Set();
+  const result = [];
+  for (const league of leagues) {
+    const group = findLeagueGroup(league);
+    if (group) {
+      if (seenGroupLabels.has(group.label)) {
+        continue;
+      }
+      seenGroupLabels.add(group.label);
+      result.push({ label: group.label, members: group.members });
+    } else {
+      result.push({ label: leagueCheckboxLabel(league), members: [league] });
+    }
+  }
+  return result;
+}
+
 // 대회성 리그(정기 리그가 아닌 단발성 대회)는 부수 표기 대상이 아니다.
 // 이런 리그는 항상 원래 명칭을 유지한다.
 const TOURNAMENT_LEAGUES = new Set([
@@ -105,6 +140,7 @@ function leagueCheckboxLabel(league) {
 export {
   formatLeagueLabel,
   leagueCheckboxLabel,
+  groupLeaguesForCheckboxes,
   abbreviateVenue,
   abbreviateLeagueTag,
   isTournamentLeague,

@@ -2,6 +2,7 @@ import assert from "node:assert";
 import {
   formatLeagueLabel,
   leagueCheckboxLabel,
+  groupLeaguesForCheckboxes,
   abbreviateVenue,
   abbreviateLeagueTag,
   isTournamentLeague,
@@ -76,8 +77,42 @@ assert.strictEqual(leagueCheckboxLabel("원외리그"), "성동원외리그");
 
 // tournaments and unconfirmed leagues unaffected by the explicit map
 assert.strictEqual(leagueCheckboxLabel("성동구청장기 야구대회"), "성동구청장기 야구대회 (대회)");
-assert.strictEqual(leagueCheckboxLabel("생활체육서울시민리그"), "생활체육서울시민리그");
-assert.strictEqual(leagueCheckboxLabel("서울시민리그(S-리그)"), "서울시민리그(S-리그)");
 assert.strictEqual(leagueCheckboxLabel("디비전 6-강남구"), "디비전6-강남구");
+
+// "생활체육서울시민리그"(2024) and "서울시민리그(S-리그)"(2025) are the
+// same league under a different season's naming (user-confirmed) - they
+// collapse into one checkbox labeled "서울시민리그" whose filter matches
+// both original names, so the checkbox count doesn't double for what is
+// actually one league across seasons.
+const grouped = groupLeaguesForCheckboxes([
+  "일요 싱글",
+  "생활체육서울시민리그",
+  "서울시민리그(S-리그)",
+  "디비전 6-강남구",
+]);
+assert.strictEqual(grouped.length, 3);
+const seoulCitizenGroup = grouped.find((g) => g.label === "서울시민리그");
+assert.ok(seoulCitizenGroup, "expected a 서울시민리그 group entry");
+assert.deepStrictEqual(
+  seoulCitizenGroup.members.slice().sort(),
+  ["생활체육서울시민리그", "서울시민리그(S-리그)"].sort()
+);
+
+// ungrouped leagues pass through as a single-member group with their
+// normal checkbox label
+const soleGroup = grouped.find((g) => g.label === "일요성동3부");
+assert.deepStrictEqual(soleGroup.members, ["일요 싱글"]);
+
+// if only one of the two grouped names appears in the data (e.g. records
+// come from just one season), the group still forms with BOTH original
+// names in members - matching stays correct even against data from other
+// seasons that do use the other name
+const partialGrouped = groupLeaguesForCheckboxes(["생활체육서울시민리그"]);
+assert.strictEqual(partialGrouped.length, 1);
+assert.strictEqual(partialGrouped[0].label, "서울시민리그");
+assert.deepStrictEqual(
+  partialGrouped[0].members.slice().sort(),
+  ["생활체육서울시민리그", "서울시민리그(S-리그)"].sort()
+);
 
 console.log("all league-label tests passed");

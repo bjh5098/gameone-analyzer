@@ -48,6 +48,42 @@
 
 ## 진행 상태
 
-아직 수집/파싱 파이프라인 코드는 작성 전. `games.md`의 URL 목록과 `games_meta.csv`의
-리그/구장 정보를 기반으로 경기별 파싱 → 타석 단위 상황 태깅 → 조건별 집계 순서로 구현할 예정.
-상세 진행 계획과 파싱 로직(의사코드), 이벤트 코드 사전은 [`CLAUDE.md`](./CLAUDE.md) 참고.
+95경기(2024~2026시즌) 전부 수집·파싱·SQLite DB 빌드 완료. 타자/투수 분석 페이지가
+GitHub Pages로 배포되어 있음. 상세 진행 계획과 파싱 로직(의사코드), 이벤트 코드 사전은
+[`CLAUDE.md`](./CLAUDE.md) 참고, 구현 계획 전체는
+[`docs/superpowers/plans/2026-08-10-gameone-analyzer.md`](./docs/superpowers/plans/2026-08-10-gameone-analyzer.md) 참고.
+
+## 실행 방법
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python scripts/fetch_all.py       # 원문 HTML 캐싱 (최초 1회, 요청당 3초 지연)
+.venv/bin/python scripts/build_db.py        # SQLite DB 빌드 + 스코어보드 검증
+.venv/bin/python scripts/build_site_data.py # 정적 JSON 생성 (docs/data_batter.json, docs/data_pitcher.json)
+```
+
+테스트:
+
+```bash
+.venv/bin/python -m pytest tests/ -v
+for f in tests/js/*.mjs; do node "$f"; done
+```
+
+## 배포된 사이트
+
+https://bjh5098.github.io/gameone-analyzer/
+
+## 알려진 한계
+
+- 콤마(`,`)로 묶인 이벤트는 한 타석 내 이벤트 시퀀스, 슬래시(`/`)는 같은 이닝에서 타순이
+  한 바퀴 돌아 동일 타순이 재차 타석에 선 것을 의미함(다른 타석). 이 구분자를 활용해
+  이닝별 재구성 정확도를 크게 개선했으나(스코어보드 대조 검증 시 대부분 이닝 일치), 야수
+  실책/야수선택 뒤 정확한 진루 베이스 수는 코드만으로 완전히 결정되지 않는 케이스가 있어
+  일부 이닝에서 여전히 오차가 남아있음(CLAUDE.md에 known limitation으로 기록).
+- 투수 등판 이닝은 투수기록 테이블의 누적 이닝 표기(예: `2 ⅓`)를 순서대로 정수 이닝에
+  배정한 근사치이며, 이닝 중간 교체 시점의 타석 단위 정교화는 하지 않음.
+- 일부 경기(콜드승 등)는 gameone.kr 소스 데이터 자체에 상대팀 타자기록이 비어있음(파싱
+  버그 아님) — 우리팀(D-Dogs OB) 데이터에는 영향 없음.
+- 투수 분석 페이지는 한양대학교 D-Dogs OB 투수만 다루며, 상대팀 투수 분석은 범위 밖.
+- 점수차 필터는 아직 구현하지 않음(요구사항 미확정).

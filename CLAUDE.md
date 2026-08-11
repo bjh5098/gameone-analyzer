@@ -92,18 +92,26 @@ for inning in 1..N:
   - 이 CSV에 있는 리그 목록: 일요 싱글, 일요메이져, 일요리그(C조), 수요 야간, 일요 3부, 원외리그,
     서울시민리그(S-리그), 생활체육서울시민리그, 디비전 6-강남구, 성동구청장기 야구대회,
     친선경기, 그 외 대회성 리그 소수
-- **아직 없음**: 개별 경기 박스스코어 HTML/파싱 결과 저장 파일. 지금까지는 예시 경기
-  1건(`game_idx=1685452`)만 구조 확인용으로 파싱해봤고, 결과를 파일로 저장하지 않음
-  (이전 세션에서 `/tmp`에 임시로만 있었음 — 세션 종료 시 사라짐).
+- 95경기 원문 HTML: `data/raw/{game_idx}.html` (로컬 캐시, `.gitignore`에 포함되어 git에는 없음 —
+  재수집하려면 `scripts/fetch_all.py` 실행)
+- 파싱·시뮬레이션 결과: `data/gameone.db` (SQLite, `.gitignore`에 포함 — `scripts/build_db.py`로 재생성)
+- 정적 사이트용 JSON: [`docs/data_batter.json`](./docs/data_batter.json),
+  [`docs/data_pitcher.json`](./docs/data_pitcher.json) (git에 커밋됨, `scripts/build_site_data.py`로 재생성)
 
-## 다음 세션에서 할 일 (제안)
+## 완료된 작업
 
-1. `games_meta.csv` + `games.md`를 기반으로 실제 파서 스크립트 작성
-   (HTML fetch → 타자/투수 테이블 추출 → 이벤트 코드 파싱 → 상태 시뮬레이션)
-2. 이벤트 코드 사전을 경기 몇 건 더 훑어보며 보강 (위 표는 1경기 샘플 기반이라 불완전)
-3. 파싱 결과를 경기별로 캐싱해서 저장할 형식 결정 (예: `data/game_{game_idx}.json` — 원문 재요청 최소화 목적)
-4. 점수차 필터([확인 필요] 상태)를 사용자와 재확인
-5. 타자 관점/투수 관점 2개 페이지의 실제 구현 방식(CLI 스크립트 vs 노트북 vs 웹) 논의
+1. ~~`games_meta.csv` + `games.md`를 기반으로 실제 파서 스크립트 작성~~ — 완료
+   (`src/gameone_analyzer/{fetch,parser,events,simulator,validator,stats,export}.py`)
+2. ~~이벤트 코드 사전을 경기 몇 건 더 훑어보며 보강~~ — 완료 (95경기 전체 스캔, UNKNOWN 코드 0개)
+3. ~~파싱 결과를 경기별로 캐싱해서 저장할 형식 결정~~ — 완료 (`data/raw/{game_idx}.html` + `data/gameone.db`)
+4. 타자 관점/투수 관점 2개 페이지 — 완료. Vanilla HTML/JS 정적 사이트로 GitHub Pages 배포
+   (https://bjh5098.github.io/gameone-analyzer/)
+
+## 남은 작업
+
+- 점수차 필터([확인 필요] 상태)를 사용자와 재확인 후 구현
+- 콤마/슬래시 이벤트 체인 파싱으로도 완전히 해소되지 않는 소수 이닝의 스코어보드 불일치
+  (야수 에러/야수선택 뒤 정확한 진루 베이스 수가 코드만으로 확정 불가) — README.md "알려진 한계" 참고
 
 ## 작업 시 주의사항
 

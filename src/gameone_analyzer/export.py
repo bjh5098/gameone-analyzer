@@ -1,7 +1,10 @@
+import math
 import sqlite3
 
 from gameone_analyzer.events import classify, EventType
 from gameone_analyzer.stats import runner_state_key
+
+FRACTION_MAP = {"⅓": 1 / 3, "⅔": 2 / 3}
 
 RESULT_MAP = {
     EventType.HIT_SINGLE: "1B",
@@ -31,6 +34,61 @@ def classify_result(events_codes: list) -> str:
             continue
         return RESULT_MAP.get(event_type, "OTHER")
     return "OTHER"
+
+
+def _parse_innings_pitched(text: str) -> float:
+    text = text.strip()
+    for symbol, value in FRACTION_MAP.items():
+        if symbol in text:
+            whole_part = text.replace(symbol, "").strip()
+            whole = float(whole_part) if whole_part else 0.0
+            return whole + value
+    return float(text) if text else 0.0
+
+
+def assign_pitcher_to_innings(pitcher_rows: list) -> dict:
+    mapping = {}
+    current_inning = 1
+    sorted_rows = sorted(pitcher_rows, key=lambda r: r.order)
+    for row in sorted_rows:
+        ip = _parse_innings_pitched(row.innings_pitched_str)
+        num_innings = max(1, math.ceil(ip - 1e-9)) if ip > 0 else 1
+        for _ in range(num_innings):
+            mapping[current_inning] = row.name
+            current_inning += 1
+    return mapping
+
+
+def export_pitcher_view_records(conn: sqlite3.Connection, pitcher_innings_by_game: dict) -> list:
+    conn.row_factory = sqlite3.Row
+    query = (
+        "SELECT pa.*, g.season, g.league, g.venue FROM plate_appearances pa "
+        "JOIN games g ON pa.game_idx = g.game_idx "
+        "WHERE pa.is_our_team = 0"
+    )
+    records = []
+    for row in conn.execute(query).fetchall():
+        game_map = pitcher_innings_by_game.get(row["game_idx"], {})
+        pitcher_name = game_map.get(row["inning"], "UNKNOWN")
+        events_codes = [e for e in row["cell_text"].split(",") if e.strip()]
+        records.append({
+            "game_idx": row["game_idx"],
+            "season": row["season"],
+            "league": row["league"],
+            "venue": row["venue"],
+            "pitcher_name": pitcher_name,
+            "player_name": row["player_name"],
+            "inning": row["inning"],
+            "outs_before": row["outs_before"],
+            "runner_state": runner_state_key(
+                bool(row["runner_first"]), bool(row["runner_second"]), bool(row["runner_third"])
+            ),
+            "is_risp": bool(row["is_risp"]),
+            "cell_text": row["cell_text"],
+            "events": events_codes,
+            "result": classify_result(events_codes),
+        })
+    return records
 
 
 def export_all_plate_appearances(conn: sqlite3.Connection) -> list:

@@ -93,6 +93,7 @@
     import { loadJSON } from "./js/data-loader.js";
     import { computeBatterStats, groupByPlayer } from "./js/batter-page.js";
     import { sortEntries, nextSortState } from "./js/table-sort.js";
+    import { leagueCheckboxLabel } from "./js/league-label.js";
 
     let allRecords = [];
     let sortState = { key: "PA", direction: "desc" };
@@ -139,7 +140,7 @@
       const leagues = Array.from(new Set(records.map((r) => r.league))).sort();
       const container = document.getElementById("leagueCheckboxes");
       container.innerHTML = leagues
-        .map((l) => `<label><input type="checkbox" name="league" value="${l}" /> ${l}</label>`)
+        .map((l) => `<label><input type="checkbox" name="league" value="${l}" /> ${leagueCheckboxLabel(l)}</label>`)
         .join("");
     }
 

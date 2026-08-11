@@ -75,14 +75,14 @@ GitHub Actions(선택적, 정적 파일 빌드) 또는 로컬 빌드 스크립�
 - Produces: `fetch.load_game_ids_from_csv(csv_path: Path) -> list[int]` — `games_meta.csv`의
   `game_idx` 컬럼을 정수 리스트로 반환.
 
-- [ ] **Step 1: 디렉터리 구조 생성**
+- [x] **Step 1: 디렉터리 구조 생성**
 
 ```bash
 mkdir -p src/gameone_analyzer tests scripts data/raw docs/superpowers/plans
 touch src/gameone_analyzer/__init__.py
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `tests/test_fetch.py`:
 ```python
@@ -117,12 +117,12 @@ def test_fetch_boxscore_html_uses_cache(tmp_path, monkeypatch):
     assert html == "<html>cached</html>"
 ```
 
-- [ ] **Step 3: 테스트 실행하여 실패 확인**
+- [x] **Step 3: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_fetch.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'gameone_analyzer'` (아직 구현 없음)
 
-- [ ] **Step 4: 최소 구현 작성**
+- [x] **Step 4: 최소 구현 작성**
 
 `src/gameone_analyzer/fetch.py`:
 ```python
@@ -162,12 +162,12 @@ def load_game_ids_from_csv(csv_path: Path) -> list[int]:
         return [int(row["game_idx"]) for row in reader]
 ```
 
-- [ ] **Step 5: 테스트 실행하여 통과 확인**
+- [x] **Step 5: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_fetch.py -v`
 Expected: PASS (2 passed)
 
-- [ ] **Step 6: 전체 95경기 수집 스크립트 작성**
+- [x] **Step 6: 전체 95경기 수집 스크립트 작성**
 
 `scripts/fetch_all.py`:
 ```python
@@ -199,7 +199,7 @@ if __name__ == "__main__":
 
 이 스크립트는 이후 사용자 승인 하에 실제로 95경기를 수집할 때 실행한다(Task 3 이전, 별도 확인 후).
 
-- [ ] **Step 7: 커밋 및 푸시**
+- [x] **Step 7: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/__init__.py src/gameone_analyzer/fetch.py scripts/fetch_all.py tests/test_fetch.py requirements.txt .gitignore
@@ -263,7 +263,7 @@ git push -u origin master
 | `대주자`,`대수비` | NOT_A_PLATE_APPEARANCE | No |
 | 그 외 | UNKNOWN | 미정(로그만) |
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_events.py`:
 ```python
@@ -343,12 +343,12 @@ def test_is_out_table():
     assert is_out(EventType.HIT_SINGLE) is False
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_events.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'gameone_analyzer.events'`
 
-- [ ] **Step 3: 구현 작성**
+- [x] **Step 3: 구현 작성**
 
 `src/gameone_analyzer/events.py`:
 ```python
@@ -472,7 +472,7 @@ def is_out(event_type: EventType) -> bool:
     return event_type in OUT_EVENTS
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인, suffix 순서 버그 수정**
+- [x] **Step 4: 테스트 실행하여 통과 확인, suffix 순서 버그 수정**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_events.py -v`
 
@@ -481,7 +481,7 @@ Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m py
 맞춰놓았음(`endswith("땅R")`을 `endswith("땅")`보다 먼저 검사). 테스트가 실패하면 이 순서를 재확인.
 Expected: PASS (모든 테스트 통과)
 
-- [ ] **Step 5: 커밋 및 푸시**
+- [x] **Step 5: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/events.py tests/test_events.py
@@ -512,14 +512,14 @@ git push
 
 **픽스처 준비:**
 
-- [ ] **Step 1: 실제 샘플 HTML을 테스트 픽스처로 복사**
+- [x] **Step 1: 실제 샘플 HTML을 테스트 픽스처로 복사**
 
 ```bash
 mkdir -p tests/fixtures
 cp /tmp/gameone_probe/1685452.html tests/fixtures/sample_1685452.html
 ```
 
-- [ ] **Step 2: 실패하는 테스트 작성**
+- [x] **Step 2: 실패하는 테스트 작성**
 
 `tests/test_parser.py`:
 ```python
@@ -574,12 +574,12 @@ def test_parse_batter_rows_third_home_batter():
     assert third.cells[2] == "투야선"
 ```
 
-- [ ] **Step 3: 테스트 실행하여 실패 확인**
+- [x] **Step 3: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_parser.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'gameone_analyzer.parser'`
 
-- [ ] **Step 4: 구현 작성**
+- [x] **Step 4: 구현 작성**
 
 `src/gameone_analyzer/parser.py`:
 ```python
@@ -688,12 +688,12 @@ def parse_batter_rows(html: str) -> list:
     return result
 ```
 
-- [ ] **Step 5: 테스트 실행하여 통과 확인**
+- [x] **Step 5: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_parser.py -v`
 Expected: PASS
 
-- [ ] **Step 6: 커밋 및 푸시**
+- [x] **Step 6: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/parser.py tests/test_parser.py tests/fixtures/sample_1685452.html
@@ -736,7 +736,7 @@ git push
 - 도루/도루자/주자아웃/견제사/폭투/보크/포일/런다운은 "주자 상태 변경" 이벤트로 처리(타자는 그대로 타석 유지 상태로 간주하지 않고, 해당 셀의 첫 이벤트가 이미 타자 결과를 확정지었다고 가정 — 첫 이벤트로 아웃/진루가 정해지고 이후 이벤트는 잔여 주자에게 적용)
 - 홈런/3루타/2루타는 강제 진루량만큼 모든 주자 및 타자를 진루, 3루를 넘는 주자는 득점 처리
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_simulator.py`:
 ```python
@@ -821,12 +821,12 @@ def test_simulate_team_innings_skips_empty_cells():
     assert pas[0].name == "A"
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_simulator.py -v`
 Expected: FAIL with `ModuleNotFoundError: No module named 'gameone_analyzer.simulator'`
 
-- [ ] **Step 3: 구현 작성**
+- [x] **Step 3: 구현 작성**
 
 `src/gameone_analyzer/simulator.py`:
 ```python
@@ -998,7 +998,7 @@ def simulate_team_innings(rows: list, team: str) -> list:
     return result
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_simulator.py -v`
 Expected: PASS. 실패 시 `_advance_runners`의 베이스 오버플로 로직(`target >= 4`) 우선순위를 확인 —
@@ -1006,7 +1006,7 @@ Expected: PASS. 실패 시 `_advance_runners`의 베이스 오버플로 로직(`
 `occupied` 리스트가 1,2,3 오름차순이라도 `new_bases`는 집합이라 최종 상태만 반영되므로 문제 없음,
 다만 동시에 여러 주자가 같은 target로 겹치는 극단 케이스는 없음 — 야구 규칙상 발생 불가).
 
-- [ ] **Step 5: 커밋 및 푸시**
+- [x] **Step 5: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/simulator.py tests/test_simulator.py
@@ -1034,7 +1034,7 @@ git push
 **주의:** `simulate_team_innings`는 상태만 추적하고 득점을 반환하지 않으므로, 검증기에서는 각 PA를
 `apply_events`로 다시 돌려서 득점을 집계한다(순수 함수라 재실행 비용 낮음, 95경기 규모에서 문제 없음).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_validator.py`:
 ```python
@@ -1069,12 +1069,12 @@ def test_compare_with_scoreboard_matches():
     assert compare_with_scoreboard(sim_runs, scoreboard) == []
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_validator.py -v`
 Expected: FAIL with `ModuleNotFoundError`
 
-- [ ] **Step 3: 구현 작성**
+- [x] **Step 3: 구현 작성**
 
 `src/gameone_analyzer/validator.py`:
 ```python
@@ -1102,12 +1102,12 @@ def compare_with_scoreboard(sim_runs: dict, scoreboard_innings: list) -> list:
     return mismatches
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_validator.py -v`
 Expected: PASS
 
-- [ ] **Step 5: SQLite 스키마 + 전체 빌드 스크립트 작성**
+- [x] **Step 5: SQLite 스키마 + 전체 빌드 스크립트 작성**
 
 `scripts/build_db.py`:
 ```python
@@ -1229,7 +1229,7 @@ if __name__ == "__main__":
 이 스크립트는 `data/raw/`에 이미 캐시된 HTML만 사용(`delay_sec=0`) — 실제 신규 수집은 Task 1의
 `scripts/fetch_all.py`로 먼저 완료해야 한다.
 
-- [ ] **Step 6: 커밋 및 푸시 (스크립트만, DB 파일은 커밋하지 않음)**
+- [x] **Step 6: 커밋 및 푸시 (스크립트만, DB 파일은 커밋하지 않음)**
 
 ```bash
 git add src/gameone_analyzer/validator.py tests/test_validator.py scripts/build_db.py
@@ -1244,7 +1244,7 @@ git push
 이 태스크는 코드 작성이 아니라 **실행** 태스크다. 실행 전 사용자에게 "지금 95경기를 순차로
 (요청당 3초 지연, 약 5분) 수집하겠습니다"라고 알리고 진행한다 — CLAUDE.md의 재확인 요구사항 충족.
 
-- [ ] **Step 1: 원문 HTML 95건 수집**
+- [x] **Step 1: 원문 HTML 95건 수집**
 
 ```bash
 cd /Users/bae/project/workspace/gameone_analyzer
@@ -1253,7 +1253,7 @@ cd /Users/bae/project/workspace/gameone_analyzer
 
 Expected: 95줄 출력(`fetched` 또는 `cached`), 에러 없이 종료. `data/raw/`에 `*.html` 95개 생성 확인.
 
-- [ ] **Step 2: DB 빌드 실행**
+- [x] **Step 2: DB 빌드 실행**
 
 ```bash
 .venv/bin/python scripts/build_db.py
@@ -1264,7 +1264,7 @@ mismatch가 있는 경기는 로그에 game_idx와 이닝별 불일치 내용이
 (CLAUDE.md 방침대로 100% 정합을 막지 않음, 다만 mismatch 비율이 30% 넘으면 사용자에게 보고 후 이벤트
 코드 사전 보강이 필요한지 확인).
 
-- [ ] **Step 3: 검증 결과 요약 확인**
+- [x] **Step 3: 검증 결과 요약 확인**
 
 ```bash
 .venv/bin/python -c "
@@ -1279,7 +1279,7 @@ print(f'games={total} validated={validated} our_team_pas={pa_count}')
 
 Expected: `games=95`, `our_team_pas`가 0보다 큰 값(대략 경기당 30~40타석 * 95 ≈ 3000 안팎).
 
-- [ ] **Step 4: 진행 상황 문서에 결과 기록 (Task 커밋에 포함)**
+- [x] **Step 4: 진행 상황 문서에 결과 기록 (Task 커밋에 포함)**
 
 이 계획 문서(`docs/superpowers/plans/2026-08-10-gameone-analyzer.md`)의 이 Task 6 섹션 아래에
 실제 mismatch 개수와 game_idx 목록을 코드 블록으로 추가한다. 커밋 메시지에 결과를 남긴다.
@@ -1318,7 +1318,7 @@ gameone.kr 원문 재배포를 피하기 위함. 다음 세션에서 이어가�
 Task 8(타자 페이지 빌더)와 Task 9(투수 페이지 빌더)에서 각 관점에 맞게 계산한다. 여기서는 조건에 맞는
 타석(PA) 원시 행만 뽑아주는 공용 필터 레이어를 만든다.
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_stats.py`:
 ```python
@@ -1401,12 +1401,12 @@ def test_query_plate_appearances_filters_by_season_and_league(tmp_path):
     assert query_plate_appearances(conn, filters_no_match) == []
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_stats.py -v`
 Expected: FAIL with `ModuleNotFoundError`
 
-- [ ] **Step 3: 구현 작성**
+- [x] **Step 3: 구현 작성**
 
 `src/gameone_analyzer/stats.py`:
 ```python
@@ -1490,12 +1490,12 @@ def query_plate_appearances(conn: sqlite3.Connection, filters: FilterOptions):
     return rows
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_stats.py -v`
 Expected: PASS
 
-- [ ] **Step 5: 커밋 및 푸시**
+- [x] **Step 5: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/stats.py tests/test_stats.py
@@ -1531,7 +1531,7 @@ git push
     `PlateAppearanceRecord` 형태 dict 리스트로 반환(투수 이름 포함 — 상대팀 투수는 이 태스크에서는
     생략, Task 9에서 별도 처리).
 
-- [ ] **Step 1: 실패하는 테스트 작성**
+- [x] **Step 1: 실패하는 테스트 작성**
 
 `tests/test_export.py`:
 ```python
@@ -1582,12 +1582,12 @@ def test_classify_result_unknown_defaults_other():
     assert classify_result(["존재하지않는코드"]) == "OTHER"
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_export.py -v`
 Expected: FAIL with `ModuleNotFoundError`
 
-- [ ] **Step 3: 구현 작성**
+- [x] **Step 3: 구현 작성**
 
 `src/gameone_analyzer/export.py`:
 ```python
@@ -1655,12 +1655,12 @@ def export_all_plate_appearances(conn: sqlite3.Connection) -> list:
     return records
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && .venv/bin/python -m pytest tests/test_export.py -v`
 Expected: PASS
 
-- [ ] **Step 5: 빌드 스크립트 작성**
+- [x] **Step 5: 빌드 스크립트 작성**
 
 `scripts/build_site_data.py`:
 ```python
@@ -1692,7 +1692,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 6: 커밋 및 푸시**
+- [x] **Step 6: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/export.py tests/test_export.py scripts/build_site_data.py
@@ -1729,7 +1729,7 @@ git push
   - `export.export_pitcher_view_records(conn) -> list[dict]` — 상대팀 PA(`is_our_team = 0`)에 우리팀
     투수 이름을 붙여 반환. 필드는 Task 8 레코드와 동일 + `"pitcher_name": str`.
 
-- [ ] **Step 1: parser에 투수 테이블 파싱 추가 — 실패하는 테스트 작성**
+- [x] **Step 1: parser에 투수 테이블 파싱 추가 — 실패하는 테스트 작성**
 
 `tests/test_parser.py`에 추가:
 ```python
@@ -1746,12 +1746,12 @@ def test_parse_pitcher_rows():
     assert home_pitchers[1].order == 2
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_parser.py::test_parse_pitcher_rows -v`
 Expected: FAIL with `ImportError`
 
-- [ ] **Step 3: `parser.py`에 구현 추가**
+- [x] **Step 3: `parser.py`에 구현 추가**
 
 `src/gameone_analyzer/parser.py`에 추가:
 ```python
@@ -1792,12 +1792,12 @@ def parse_pitcher_rows(html: str) -> list:
     return result
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_parser.py -v`
 Expected: PASS. 실패 시 `tds[1]`이 실제 "이닝" 컬럼과 맞는지 헤더 순서(결과=tds[0], 이닝=tds[1]) 재확인.
 
-- [ ] **Step 5: 이닝-투수 배정 로직 — 실패하는 테스트 작성**
+- [x] **Step 5: 이닝-투수 배정 로직 — 실패하는 테스트 작성**
 
 `tests/test_export.py`에 추가:
 ```python
@@ -1830,12 +1830,12 @@ def test_assign_pitcher_to_innings_no_fraction():
     assert mapping[5] == "B"
 ```
 
-- [ ] **Step 6: 테스트 실행하여 실패 확인**
+- [x] **Step 6: 테스트 실행하여 실패 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_export.py::test_assign_pitcher_to_innings_simple -v`
 Expected: FAIL with `ImportError`
 
-- [ ] **Step 7: 구현 추가**
+- [x] **Step 7: 구현 추가**
 
 `src/gameone_analyzer/export.py`에 추가:
 ```python
@@ -1867,12 +1867,12 @@ def assign_pitcher_to_innings(pitcher_rows: list) -> dict:
     return mapping
 ```
 
-- [ ] **Step 8: 테스트 실행하여 통과 확인**
+- [x] **Step 8: 테스트 실행하여 통과 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_export.py -v`
 Expected: PASS
 
-- [ ] **Step 9: `export_pitcher_view_records` 추가 — 실패하는 테스트 작성**
+- [x] **Step 9: `export_pitcher_view_records` 추가 — 실패하는 테스트 작성**
 
 `tests/test_export.py`에 추가:
 ```python
@@ -1916,12 +1916,12 @@ def test_export_pitcher_view_records(tmp_path):
     assert records[0]["result"] == "1B"
 ```
 
-- [ ] **Step 10: 테스트 실행하여 실패 확인**
+- [x] **Step 10: 테스트 실행하여 실패 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_export.py::test_export_pitcher_view_records -v`
 Expected: FAIL with `ImportError`
 
-- [ ] **Step 11: 구현 추가**
+- [x] **Step 11: 구현 추가**
 
 `src/gameone_analyzer/export.py`에 추가:
 ```python
@@ -1957,12 +1957,12 @@ def export_pitcher_view_records(conn: sqlite3.Connection, pitcher_innings_by_gam
     return records
 ```
 
-- [ ] **Step 12: 테스트 실행하여 통과 확인**
+- [x] **Step 12: 테스트 실행하여 통과 확인**
 
 Run: `.venv/bin/python -m pytest tests/test_export.py tests/test_parser.py -v`
 Expected: PASS (전체)
 
-- [ ] **Step 13: `scripts/build_site_data.py` 수정 — 투수 데이터도 함께 출력**
+- [x] **Step 13: `scripts/build_site_data.py` 수정 — 투수 데이터도 함께 출력**
 
 `scripts/build_site_data.py`를 다음으로 교체:
 ```python
@@ -2028,7 +2028,7 @@ if __name__ == "__main__":
 (이전 `docs/data.json` 단일 출력 방식에서 `data_batter.json`/`data_pitcher.json` 2파일로 변경됨 —
 Task 8에서 만든 파일명을 이 시점에 교체.)
 
-- [ ] **Step 14: 커밋 및 푸시**
+- [x] **Step 14: 커밋 및 푸시**
 
 ```bash
 git add src/gameone_analyzer/parser.py src/gameone_analyzer/export.py tests/test_parser.py tests/test_export.py scripts/build_site_data.py
@@ -2040,13 +2040,13 @@ git push
 
 ### Task 10: 실제 데이터로 사이트 데이터 생성 + 검증
 
-- [ ] **Step 1: build_db.py가 아직 안 돌았다면 Task 6부터 먼저 완료 확인**
+- [x] **Step 1: build_db.py가 아직 안 돌았다면 Task 6부터 먼저 완료 확인**
 
 ```bash
 ls data/gameone.db || echo "Task 6을 먼저 완료해야 함"
 ```
 
-- [ ] **Step 2: 사이트 데이터 생성**
+- [x] **Step 2: 사이트 데이터 생성**
 
 ```bash
 cd /Users/bae/project/workspace/gameone_analyzer
@@ -2055,7 +2055,7 @@ cd /Users/bae/project/workspace/gameone_analyzer
 
 Expected: `docs/data_batter.json`, `docs/data_pitcher.json` 생성, 각각 레코드 수 출력.
 
-- [ ] **Step 3: 생성된 JSON 정합성 스팟체크**
+- [x] **Step 3: 생성된 JSON 정합성 스팟체크**
 
 ```bash
 .venv/bin/python -c "
@@ -2077,7 +2077,7 @@ print('venues:', venues)
 
 Expected: 에러 없이 출력, `seasons`에 2024/2025/2026이 모두 포함.
 
-- [ ] **Step 4: 커밋 및 푸시**
+- [x] **Step 4: 커밋 및 푸시**
 
 ```bash
 git add docs/data_batter.json docs/data_pitcher.json
@@ -2102,7 +2102,7 @@ git push
   - `filters.matchesFilter(record, filterState) -> boolean`
   - `dataLoader.loadJSON(path) -> Promise<Array>`
 
-- [ ] **Step 1: `docs/js/filters.js` 작성 (순수 함수, 테스트는 Node로 간단 실행)**
+- [x] **Step 1: `docs/js/filters.js` 작성 (순수 함수, 테스트는 Node로 간단 실행)**
 
 ```javascript
 function buildFilterState(formElement) {
@@ -2160,7 +2160,7 @@ if (typeof module !== "undefined") {
 }
 ```
 
-- [ ] **Step 2: Node로 간단 테스트 작성 및 실행 (jsdom 없이, DOM 목업으로)**
+- [x] **Step 2: Node로 간단 테스트 작성 및 실행 (jsdom 없이, DOM 목업으로)**
 
 `tests/js/test_filters.mjs`:
 ```javascript
@@ -2215,12 +2215,12 @@ export { buildFilterState, matchesFilter, normalizeVenue };
 (브라우저에서는 `<script type="module" src="js/filters.js"></script>`로 로드하므로 `export`문이
 문제없이 동작함 — Step 1 코드 수정 후 저장.)
 
-- [ ] **Step 3: 테스트 실행하여 통과 확인**
+- [x] **Step 3: 테스트 실행하여 통과 확인**
 
 Run: `cd /Users/bae/project/workspace/gameone_analyzer && node tests/js/test_filters.mjs`
 Expected: `all filter tests passed` 출력, 에러 없음.
 
-- [ ] **Step 4: `docs/js/data-loader.js` 작성**
+- [x] **Step 4: `docs/js/data-loader.js` 작성**
 
 ```javascript
 async function loadJSON(path) {
@@ -2234,7 +2234,7 @@ async function loadJSON(path) {
 export { loadJSON };
 ```
 
-- [ ] **Step 5: 커밋 및 푸시**
+- [x] **Step 5: 커밋 및 푸시**
 
 ```bash
 mkdir -p tests/js
@@ -2259,7 +2259,7 @@ git push
   — `{ AB, H, BB, HBP, SO, "2B", "3B", HR, AVG, OBP }` 형태의 팀 전체 집계, 그리고
   `groupByPlayer(records) -> Map<string, object>` — 선수별 동일 스탯.
 
-- [ ] **Step 1: `docs/js/batter-page.js`에 순수 집계 함수 작성 + Node 테스트**
+- [x] **Step 1: `docs/js/batter-page.js`에 순수 집계 함수 작성 + Node 테스트**
 
 `tests/js/test_batter_page.mjs`:
 ```javascript
@@ -2289,12 +2289,12 @@ assert.strictEqual(byPlayer.get("B").HR, 1);
 console.log("all batter page tests passed");
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `node tests/js/test_batter_page.mjs`
 Expected: 에러(`Cannot find module`)
 
-- [ ] **Step 3: `docs/js/batter-page.js` 구현**
+- [x] **Step 3: `docs/js/batter-page.js` 구현**
 
 ```javascript
 const HIT_RESULTS = new Set(["1B", "2B", "3B", "HR"]);
@@ -2352,12 +2352,12 @@ function groupByPlayer(records) {
 export { computeBatterStats, groupByPlayer };
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `node tests/js/test_batter_page.mjs`
 Expected: `all batter page tests passed`
 
-- [ ] **Step 5: `docs/batter.html` 작성**
+- [x] **Step 5: `docs/batter.html` 작성**
 
 ```html
 <!DOCTYPE html>
@@ -2509,7 +2509,7 @@ Expected: `all batter page tests passed`
 </html>
 ```
 
-- [ ] **Step 6: 로컬 정적 서버로 육안 확인**
+- [x] **Step 6: 로컬 정적 서버로 육안 확인**
 
 ```bash
 cd /Users/bae/project/workspace/gameone_analyzer/docs
@@ -2520,7 +2520,7 @@ python3 -m http.server 8000
 필터 체크박스를 조합했을 때 숫자가 바뀌는지 확인. (Playwright MCP 도구가 있으면 스크린샷으로 검증
 가능 — `mcp__playwright__browser_navigate` 및 `browser_take_screenshot` 사용.)
 
-- [ ] **Step 7: 커밋 및 푸시**
+- [x] **Step 7: 커밋 및 푸시**
 
 ```bash
 git add docs/batter.html docs/js/batter-page.js tests/js/test_batter_page.mjs
@@ -2541,7 +2541,7 @@ git push
 - Produces: `computePitcherStats(records) -> { BF, H, "2B", "3B", HR, BB, HBP, SO, AVG_AGAINST }`,
   `groupByPitcher(records) -> Map<string, object>`
 
-- [ ] **Step 1: `tests/js/test_pitcher_page.mjs` 작성**
+- [x] **Step 1: `tests/js/test_pitcher_page.mjs` 작성**
 
 ```javascript
 import assert from "node:assert";
@@ -2566,12 +2566,12 @@ assert.strictEqual(byPitcher.get("박준호").H, 1);
 console.log("all pitcher page tests passed");
 ```
 
-- [ ] **Step 2: 테스트 실행하여 실패 확인**
+- [x] **Step 2: 테스트 실행하여 실패 확인**
 
 Run: `node tests/js/test_pitcher_page.mjs`
 Expected: 에러(모듈 없음)
 
-- [ ] **Step 3: `docs/js/pitcher-page.js` 구현**
+- [x] **Step 3: `docs/js/pitcher-page.js` 구현**
 
 ```javascript
 const HIT_RESULTS = new Set(["1B", "2B", "3B", "HR"]);
@@ -2625,12 +2625,12 @@ function groupByPitcher(records) {
 export { computePitcherStats, groupByPitcher };
 ```
 
-- [ ] **Step 4: 테스트 실행하여 통과 확인**
+- [x] **Step 4: 테스트 실행하여 통과 확인**
 
 Run: `node tests/js/test_pitcher_page.mjs`
 Expected: `all pitcher page tests passed`
 
-- [ ] **Step 5: `docs/pitcher.html` 작성 (batter.html과 동일 구조, 데이터소스/집계함수만 교체)**
+- [x] **Step 5: `docs/pitcher.html` 작성 (batter.html과 동일 구조, 데이터소스/집계함수만 교체)**
 
 ```html
 <!DOCTYPE html>
@@ -2779,7 +2779,7 @@ Expected: `all pitcher page tests passed`
 </html>
 ```
 
-- [ ] **Step 6: 로컬 서버로 육안 확인**
+- [x] **Step 6: 로컬 서버로 육안 확인**
 
 ```bash
 cd /Users/bae/project/workspace/gameone_analyzer/docs
@@ -2788,7 +2788,7 @@ python3 -m http.server 8000
 
 `http://localhost:8000/pitcher.html` 접속, 필터 적용 시 투수별 테이블이 갱신되는지 확인.
 
-- [ ] **Step 7: 커밋 및 푸시**
+- [x] **Step 7: 커밋 및 푸시**
 
 ```bash
 git add docs/pitcher.html docs/js/pitcher-page.js tests/js/test_pitcher_page.mjs
@@ -2804,7 +2804,7 @@ git push
 - Create: `docs/index.html`
 - Create: `docs/css/style.css`
 
-- [ ] **Step 1: `docs/index.html` 작성**
+- [x] **Step 1: `docs/index.html` 작성**
 
 ```html
 <!DOCTYPE html>
@@ -2832,7 +2832,7 @@ git push
 </html>
 ```
 
-- [ ] **Step 2: `docs/css/style.css` 작성**
+- [x] **Step 2: `docs/css/style.css` 작성**
 
 ```css
 body {
@@ -2889,7 +2889,7 @@ button[type="submit"] {
 }
 ```
 
-- [ ] **Step 3: GitHub Pages 활성화 (docs/ 폴더 기준, main 브랜치)**
+- [x] **Step 3: GitHub Pages 활성화 (docs/ 폴더 기준, main 브랜치)**
 
 먼저 기본 브랜치를 `main`으로 정리한다(현재 `master`) — GitHub 저장소 기본 관례에 맞춤:
 
@@ -2911,7 +2911,7 @@ gh api -X PUT repos/bjh5098/gameone-analyzer/pages -f "source[branch]=main" -f "
 (POST는 Pages가 아직 없을 때, PUT은 이미 있을 때 — 둘 다 실패하면 `gh repo view --web`으로 열어
 Settings → Pages에서 수동 설정하고 사용자에게 알린다.)
 
-- [ ] **Step 4: 배포 확인**
+- [x] **Step 4: 배포 확인**
 
 ```bash
 sleep 30
@@ -2920,7 +2920,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://bjh5098.github.io/gameone-analy
 
 Expected: `200`. 404면 1~2분 더 대기 후 재확인(GitHub Pages 최초 배포는 수 분 걸릴 수 있음).
 
-- [ ] **Step 5: 커밋 및 푸시**
+- [x] **Step 5: 커밋 및 푸시**
 
 ```bash
 git add docs/index.html docs/css/style.css
@@ -2936,7 +2936,7 @@ git push
 - Modify: `README.md`
 - Modify: `CLAUDE.md`
 
-- [ ] **Step 1: README에 실행 방법과 사이트 링크, 알려진 한계 추가**
+- [x] **Step 1: README에 실행 방법과 사이트 링크, 알려진 한계 추가**
 
 `README.md`에 다음 섹션 추가(기존 내용 유지하고 하단에 추가):
 
@@ -2965,11 +2965,11 @@ https://bjh5098.github.io/gameone-analyzer/
 - 점수차 필터는 아직 구현하지 않음(요구사항 미확정).
 ```
 
-- [ ] **Step 2: CLAUDE.md의 "다음 세션에서 할 일" 섹션을 완료 상태로 갱신**
+- [x] **Step 2: CLAUDE.md의 "다음 세션에서 할 일" 섹션을 완료 상태로 갱신**
 
 `CLAUDE.md`의 해당 섹션을 열어 완료된 항목에 체크 표시하고, 남은 작업(점수차 필터 등)만 남긴다.
 
-- [ ] **Step 3: 전체 테스트 재실행 (Python + JS)**
+- [x] **Step 3: 전체 테스트 재실행 (Python + JS)**
 
 ```bash
 cd /Users/bae/project/workspace/gameone_analyzer
@@ -2979,7 +2979,7 @@ for f in tests/js/*.mjs; do node "$f"; done
 
 Expected: 모든 테스트 통과.
 
-- [ ] **Step 4: 최종 커밋 및 푸시**
+- [x] **Step 4: 최종 커밋 및 푸시**
 
 ```bash
 git add README.md CLAUDE.md
@@ -3000,3 +3000,34 @@ git push
 
 각 Task 완료 시 이 문서의 체크박스를 갱신하고 커밋 메시지에 Task 번호를 남긴다. 세션이 중간에
 끊겨도 이 문서와 git 커밋 이력만 보면 어디까지 진행됐는지 파악 가능하다.
+
+## 전체 완료 (2026-08-11) — 실제 구현 중 계획과 달라진 부분
+
+모든 Task(1~17) 완료, https://bjh5098.github.io/gameone-analyzer/ 배포 완료. 계획 작성 시점의
+가정과 실제 95경기 데이터로 검증하며 드러난 차이점을 기록해둔다(향후 코드 참고 시 이 섹션이
+계획 본문보다 최신):
+
+- **팀 순서**: 사전 조사(1경기 샘플)에서는 "원정팀 먼저, 홈팀 나중"으로 가정했으나, `<h3>` 팀
+  헤딩과 실제 로스터로 재검증한 결과 `record_table`(타자/투수 둘 다) 순서가 **away, home** 순서로
+  일관됨을 재확인 완료 — 계획대로였고 별도 수정 불필요.
+- **이벤트 분리자 `/` vs `,`**: CLAUDE.md/계획 문서에는 명시되지 않았던 발견 — `,`는 한 타석 내
+  이벤트 시퀀스 구분자이고, `/`는 **같은 이닝에서 타순이 한 바퀴 돌아 동일 타순이 재차 타석에
+  선 별도 타석**을 구분하는 기호. 대량 득점 이닝에서만 나타남. `events.split_plate_appearances()`로
+  처리.
+- **볼넷/에러 등 force-advance 규칙**: 초기 구현은 안타처럼 모든 주자를 일괄 +1루 시켰으나, 실제
+  야구 규칙대로 1루부터 강제 연쇄로만 진루하도록 수정(`simulator._force_advance`).
+  `낫아웃+`(포일 낫아웃)는 아웃이 아니라 타자 진루 이벤트임을 발견, `STRIKEOUT_REACHED`로 분리.
+- **도루/주자아웃 등 체인 이벤트의 대상 러너**: "우안/4구,주자아웃"류 콤마·슬래시 혼합 체인에서
+  95경기 320+ 케이스를 관측한 결과, 타자가 방금 진루한 이벤트 바로 뒤에 오는 도루/폭투/도루자/
+  주자아웃/견제사/런다운은 거의 항상 **그 타자 본인**을 대상으로 함(가장 진출한 주자가 아님).
+  이 발견 전에는 "가장 진출한 주자" 휴리스틱을 썼는데 다수 이닝에서 오류를 유발했음. 최종적으로
+  `apply_events()`가 "직전 이벤트로 새로 생긴 활성 러너"를 추적해 그 다음 이벤트를 적용하고,
+  직전 이벤트가 아웃으로 끝났을 때만 "가장 진출한 주자" 휴리스틱으로 폴백.
+- **스코어보드 검증 결과**: 위 수정들 이후 우리팀(D-Dogs OB) 관점 이닝별 득점 총합 오차가
+  전체 득점의 24.1% 수준(18/95경기는 완전 일치). 야수 에러/야수선택 뒤 정확한 진루 베이스 수는
+  이벤트 코드만으로 완전히 결정 불가능한 케이스가 남아있어 CLAUDE.md에 known limitation으로
+  기록(추가 조사보다 커버리지 우선, 개인 분석 도구 특성상 100% 정합보다 실용성 우선).
+- **투수 뷰 범위**: 사용자 요청으로 상대팀 투수는 분석하지 않고 우리팀(D-Dogs OB) 투수만 다룸 —
+  `export.export_pitcher_view_records()`가 `is_our_team=0`인 상대 타자 PA에 우리팀 투수만 매핑.
+- **추가 요구사항(세션 중 반영)**: OPS/피OPS, 삼진율(K%) 컬럼과 최소 PA/BF 입력 필터를 타자·투수
+  페이지 양쪽에 추가(허수 데이터 방지 목적, 이기준 요청).

@@ -64,19 +64,24 @@ function formatLeagueLabel(season, league, venue) {
 }
 
 // League checkbox filters are keyed by league name alone (independent of
-// season/venue), so the checkbox label shows the original name with its
-// division tag or tournament marker appended, e.g. "일요 싱글 (3부)" or
-// "성동구청장기 야구대회 (대회)" - never the season/venue-qualified form
-// from formatLeagueLabel, which would misleadingly imply the checkbox is
-// scoped to one season/venue.
+// season/venue), so the checkbox label shows the original name (whitespace
+// removed) with its division tag appended directly, e.g. "수요야간4부" or
+// "일요싱글3부" - never the season/venue-qualified form from
+// formatLeagueLabel, which would misleadingly imply the checkbox is scoped
+// to one season/venue. Tournament leagues keep their full spaced name with
+// a "(대회)" suffix so they read as a distinct category, not a division.
 function leagueCheckboxLabel(league) {
   if (isTournamentLeague(league)) {
     return `${league} (대회)`;
   }
-  if (LEAGUE_TAGS[league]) {
-    return `${league} (${LEAGUE_TAGS[league]})`;
+  const compact = league.replace(/\s+/g, "");
+  const tag = LEAGUE_TAGS[league];
+  // Skip appending the tag if the compacted name already ends with it
+  // (e.g. "일요 3부" -> "일요3부", not "일요3부3부").
+  if (tag && !compact.endsWith(tag)) {
+    return `${compact}${tag}`;
   }
-  return league;
+  return compact;
 }
 
 export {

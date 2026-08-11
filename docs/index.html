@@ -7,17 +7,34 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <nav>
-    <a href="index.html" class="active">홈</a>
-    <a href="batter.html">타자 분석</a>
-    <a href="pitcher.html">투수 분석</a>
-  </nav>
-  <h1>한양대학교 D-Dogs OB 경기 분석</h1>
-  <p>gameone.kr 박스스코어 2024~2026시즌 95경기를 상황별(아웃카운트·주자상황·구장·시즌·리그)로
-     필터링해 타자/투수 스탯을 조회하는 개인 분석 도구입니다.</p>
-  <ul>
-    <li><a href="batter.html">타자 분석 페이지</a> — 아웃카운트/주자상황/구장/시즌/리그 조건별 타율·안타·OPS 등</li>
-    <li><a href="pitcher.html">투수 분석 페이지</a> — 동일 조건으로 피안타율·피OPS 등 (한양대 D-Dogs OB 투수만)</li>
-  </ul>
+  <header class="site-header">
+    <nav>
+      <a href="index.html" class="brand">D-Dogs OB Stats</a>
+      <a href="index.html" class="active">홈</a>
+      <a href="batter.html">타자 분석</a>
+      <a href="pitcher.html">투수 분석</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>한양대학교 D-Dogs OB 경기 분석</h1>
+    <p>gameone.kr 박스스코어 2024~2026시즌 95경기를 상황별(아웃카운트·주자상황·구장·시즌·리그)로
+       필터링해 타자/투수 스탯을 조회하는 개인 분석 도구입니다.</p>
+  </section>
+
+  <div class="card-grid">
+    <a class="card" href="batter.html">
+      <div class="card-title">타자 분석</div>
+      <div class="card-desc">아웃카운트/주자상황/구장/시즌/리그 조건별 타율·안타·OPS·삼진율 등</div>
+    </a>
+    <a class="card" href="pitcher.html">
+      <div class="card-title">투수 분석</div>
+      <div class="card-desc">동일 조건으로 피안타율·피OPS·삼진율 등 (한양대 D-Dogs OB 투수만)</div>
+    </a>
+  </div>
+
+  <footer class="site-footer">
+    데이터: gameone.kr 박스스코어 2024~2026시즌 95경기 · 한양대학교 D-Dogs OB
+  </footer>
 </body>
 </html>

@@ -7,12 +7,19 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <nav>
-    <a href="index.html">홈</a>
-    <a href="batter.html" class="active">타자 분석</a>
-    <a href="pitcher.html">투수 분석</a>
-  </nav>
-  <h1>타자 분석 (한양대학교 D-Dogs OB)</h1>
+  <header class="site-header">
+    <nav>
+      <a href="index.html" class="brand">D-Dogs OB Stats</a>
+      <a href="index.html">홈</a>
+      <a href="batter.html" class="active">타자 분석</a>
+      <a href="pitcher.html">투수 분석</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>타자 분석</h1>
+    <p class="lede">한양대학교 D-Dogs OB 선수들의 상황별 타격 스탯을 조회합니다.</p>
+  </section>
 
   <form id="filterForm">
     <fieldset>
@@ -61,32 +68,34 @@
   <div id="teamStats"></div>
 
   <h2>선수별 스탯</h2>
-  <p>
+  <div class="stat-controls">
     <label for="minPaInput">최소 PA</label>
     <input type="number" id="minPaInput" min="0" step="1" value="0" style="width: 4rem;" />
-    <span>(허수 방지용 — 이 값 이상인 선수만 표시)</span>
-  </p>
-  <table id="playerStatsTable">
-    <thead>
-      <tr>
-        <th data-sort-key="name">선수</th>
-        <th data-sort-key="PA">PA</th>
-        <th data-sort-key="AB">AB</th>
-        <th data-sort-key="H">H</th>
-        <th data-sort-key="2B">2B</th>
-        <th data-sort-key="3B">3B</th>
-        <th data-sort-key="HR">HR</th>
-        <th data-sort-key="BB">BB</th>
-        <th data-sort-key="HBP">HBP</th>
-        <th data-sort-key="SO">SO</th>
-        <th data-sort-key="AVG">AVG</th>
-        <th data-sort-key="OBP">OBP</th>
-        <th data-sort-key="OPS">OPS</th>
-        <th data-sort-key="K_RATE">K%</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <span>(허수 방지용 — 이 값 이상인 선수만 표시 · 컬럼 헤더 클릭 시 정렬)</span>
+  </div>
+  <div class="table-wrap">
+    <table id="playerStatsTable">
+      <thead>
+        <tr>
+          <th data-sort-key="name">선수</th>
+          <th data-sort-key="PA">PA</th>
+          <th data-sort-key="AB">AB</th>
+          <th data-sort-key="H">H</th>
+          <th data-sort-key="2B">2B</th>
+          <th data-sort-key="3B">3B</th>
+          <th data-sort-key="HR">HR</th>
+          <th data-sort-key="BB">BB</th>
+          <th data-sort-key="HBP">HBP</th>
+          <th data-sort-key="SO">SO</th>
+          <th data-sort-key="AVG">AVG</th>
+          <th data-sort-key="OBP">OBP</th>
+          <th data-sort-key="OPS">OPS</th>
+          <th data-sort-key="K_RATE">K%</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script type="module">
     import { buildFilterState, matchesFilter } from "./js/filters.js";

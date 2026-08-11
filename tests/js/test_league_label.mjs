@@ -14,6 +14,10 @@ assert.strictEqual(abbreviateLeagueTag("일요메이져"), "3부");
 assert.strictEqual(abbreviateLeagueTag("일요 3부"), "3부");
 assert.strictEqual(abbreviateLeagueTag("수요 야간"), "4부");
 
+// "일요 3부" already carries its division in its own name - the checkbox
+// label must not double it up as "일요3부3부"
+assert.strictEqual(leagueCheckboxLabel("일요 3부"), "일요3부");
+
 // season + venue + confirmed league tag combination
 assert.strictEqual(formatLeagueLabel(2024, "일요 싱글", "살곶이야구장"), "24살곶이3부");
 assert.strictEqual(formatLeagueLabel(2026, "일요 싱글", "살곶이야구장"), "26살곶이3부");
@@ -60,12 +64,13 @@ assert.strictEqual(
   "친선경기 (대회)"
 );
 
-// checkbox labels are season/venue-independent: division tag or tournament
-// marker appended to the original league name
-assert.strictEqual(leagueCheckboxLabel("일요 싱글"), "일요 싱글 (3부)");
-assert.strictEqual(leagueCheckboxLabel("일요리그(C조)"), "일요리그(C조) (4부)");
-assert.strictEqual(leagueCheckboxLabel("일요메이져"), "일요메이져 (3부)");
-assert.strictEqual(leagueCheckboxLabel("수요 야간"), "수요 야간 (4부)");
+// checkbox labels are season/venue-independent: whitespace-compacted league
+// name with the division tag appended directly (e.g. "수요야간4부"), or the
+// full spaced name + "(대회)" for tournaments
+assert.strictEqual(leagueCheckboxLabel("일요 싱글"), "일요싱글3부");
+assert.strictEqual(leagueCheckboxLabel("일요리그(C조)"), "일요리그(C조)4부");
+assert.strictEqual(leagueCheckboxLabel("일요메이져"), "일요메이져3부");
+assert.strictEqual(leagueCheckboxLabel("수요 야간"), "수요야간4부");
 assert.strictEqual(leagueCheckboxLabel("성동구청장기 야구대회"), "성동구청장기 야구대회 (대회)");
 assert.strictEqual(leagueCheckboxLabel("원외리그"), "원외리그");
 

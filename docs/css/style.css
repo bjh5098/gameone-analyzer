@@ -21,7 +21,7 @@
 
 body {
   font-family: system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
-  max-width: 1040px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 1rem 3rem;
   color: var(--text-primary);
@@ -39,7 +39,7 @@ body {
 }
 
 .site-header nav {
-  max-width: 1040px;
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -244,9 +244,9 @@ table {
 
 th,
 td {
-  padding: 0.5rem 0.7rem;
+  padding: 0.5rem 0.55rem;
   text-align: center;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   white-space: nowrap;
 }
 

@@ -78,18 +78,27 @@
       <thead>
         <tr>
           <th data-sort-key="name">선수</th>
+          <th data-sort-key="AVG">AVG</th>
           <th data-sort-key="PA">PA</th>
           <th data-sort-key="AB">AB</th>
           <th data-sort-key="H">H</th>
+          <th data-sort-key="1B">1B</th>
           <th data-sort-key="2B">2B</th>
           <th data-sort-key="3B">3B</th>
           <th data-sort-key="HR">HR</th>
+          <th data-sort-key="TB">TB</th>
+          <th data-sort-key="SAC">희타</th>
+          <th data-sort-key="SF">희비</th>
           <th data-sort-key="BB">BB</th>
+          <th data-sort-key="IBB">고의4구</th>
           <th data-sort-key="HBP">HBP</th>
           <th data-sort-key="SO">SO</th>
-          <th data-sort-key="AVG">AVG</th>
+          <th data-sort-key="GIDP">병살</th>
+          <th data-sort-key="SLG">SLG</th>
           <th data-sort-key="OBP">OBP</th>
           <th data-sort-key="OPS">OPS</th>
+          <th data-sort-key="BB_K">BB/K</th>
+          <th data-sort-key="XBH_H">장타/안타</th>
           <th data-sort-key="K_RATE">K%</th>
         </tr>
       </thead>
@@ -110,9 +119,9 @@
     function renderTeamStats(stats) {
       const el = document.getElementById("teamStats");
       el.innerHTML = `
-        <p>PA: ${stats.PA} / AB: ${stats.AB} / H: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR}</p>
-        <p>BB: ${stats.BB} / HBP: ${stats.HBP} / SO: ${stats.SO}</p>
-        <p>AVG: ${stats.AVG.toFixed(3)} / OBP: ${stats.OBP.toFixed(3)}</p>
+        <p>PA: ${stats.PA} / AB: ${stats.AB} / H: ${stats.H} / 1B: ${stats["1B"]} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR} / TB: ${stats.TB}</p>
+        <p>희타: ${stats.SAC} / 희비: ${stats.SF} / BB: ${stats.BB} / 고의4구: ${stats.IBB} / HBP: ${stats.HBP} / SO: ${stats.SO} / 병살: ${stats.GIDP}</p>
+        <p>AVG: ${stats.AVG.toFixed(3)} / OBP: ${stats.OBP.toFixed(3)} / SLG: ${stats.SLG.toFixed(3)} / OPS: ${stats.OPS.toFixed(3)}</p>
       `;
     }
 
@@ -135,11 +144,13 @@
       for (const [name, stats] of sorted) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${name}</td><td>${stats.PA}</td><td>${stats.AB}</td><td>${stats.H}</td>
-          <td>${stats["2B"]}</td><td>${stats["3B"]}</td><td>${stats.HR}</td>
-          <td>${stats.BB}</td><td>${stats.HBP}</td><td>${stats.SO}</td>
-          <td>${stats.AVG.toFixed(3)}</td><td>${stats.OBP.toFixed(3)}</td>
-          <td>${stats.OPS.toFixed(3)}</td><td>${(stats.K_RATE * 100).toFixed(1)}%</td>
+          <td>${name}</td><td>${stats.AVG.toFixed(3)}</td><td>${stats.PA}</td><td>${stats.AB}</td><td>${stats.H}</td>
+          <td>${stats["1B"]}</td><td>${stats["2B"]}</td><td>${stats["3B"]}</td><td>${stats.HR}</td><td>${stats.TB}</td>
+          <td>${stats.SAC}</td><td>${stats.SF}</td>
+          <td>${stats.BB}</td><td>${stats.IBB}</td><td>${stats.HBP}</td><td>${stats.SO}</td><td>${stats.GIDP}</td>
+          <td>${stats.SLG.toFixed(3)}</td><td>${stats.OBP.toFixed(3)}</td>
+          <td>${stats.OPS.toFixed(3)}</td><td>${stats.BB_K.toFixed(2)}</td><td>${stats.XBH_H.toFixed(3)}</td>
+          <td>${(stats.K_RATE * 100).toFixed(1)}%</td>
         `;
         tbody.appendChild(tr);
       }

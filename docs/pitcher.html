@@ -78,15 +78,21 @@
       <thead>
         <tr>
           <th data-sort-key="name">투수</th>
-          <th data-sort-key="BF">BF</th>
-          <th data-sort-key="H">H</th>
+          <th data-sort-key="AVG_AGAINST">피안타율</th>
+          <th data-sort-key="BF">타자</th>
+          <th data-sort-key="AB_AGAINST">타수</th>
+          <th data-sort-key="H">피안타</th>
           <th data-sort-key="2B">2B</th>
           <th data-sort-key="3B">3B</th>
-          <th data-sort-key="HR">HR</th>
-          <th data-sort-key="BB">BB</th>
-          <th data-sort-key="HBP">HBP</th>
-          <th data-sort-key="SO">SO</th>
-          <th data-sort-key="AVG_AGAINST">피안타율</th>
+          <th data-sort-key="HR">피홈런</th>
+          <th data-sort-key="SAC">희타</th>
+          <th data-sort-key="SF">희비</th>
+          <th data-sort-key="BB">볼넷</th>
+          <th data-sort-key="IBB">고의4구</th>
+          <th data-sort-key="HBP">사구</th>
+          <th data-sort-key="SO">탈삼진</th>
+          <th data-sort-key="WP">폭투</th>
+          <th data-sort-key="BK">보크</th>
           <th data-sort-key="OPS_AGAINST">피OPS</th>
           <th data-sort-key="K_RATE">K%</th>
         </tr>
@@ -108,9 +114,9 @@
     function renderTeamStats(stats) {
       const el = document.getElementById("teamStats");
       el.innerHTML = `
-        <p>BF: ${stats.BF} / H: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR}</p>
-        <p>BB: ${stats.BB} / HBP: ${stats.HBP} / SO: ${stats.SO}</p>
-        <p>피안타율: ${stats.AVG_AGAINST.toFixed(3)}</p>
+        <p>타자: ${stats.BF} / 타수: ${stats.AB_AGAINST} / 피안타: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / 피홈런: ${stats.HR}</p>
+        <p>희타: ${stats.SAC} / 희비: ${stats.SF} / 볼넷: ${stats.BB} / 고의4구: ${stats.IBB} / 사구: ${stats.HBP} / 탈삼진: ${stats.SO} / 폭투: ${stats.WP} / 보크: ${stats.BK}</p>
+        <p>피안타율: ${stats.AVG_AGAINST.toFixed(3)} / 피OPS: ${stats.OPS_AGAINST.toFixed(3)}</p>
       `;
     }
 
@@ -135,10 +141,11 @@
       for (const [name, stats] of sorted) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${name}</td><td>${stats.BF}</td><td>${stats.H}</td>
+          <td>${name}</td><td>${stats.AVG_AGAINST.toFixed(3)}</td><td>${stats.BF}</td><td>${stats.AB_AGAINST}</td><td>${stats.H}</td>
           <td>${stats["2B"]}</td><td>${stats["3B"]}</td><td>${stats.HR}</td>
-          <td>${stats.BB}</td><td>${stats.HBP}</td><td>${stats.SO}</td>
-          <td>${stats.AVG_AGAINST.toFixed(3)}</td>
+          <td>${stats.SAC}</td><td>${stats.SF}</td>
+          <td>${stats.BB}</td><td>${stats.IBB}</td><td>${stats.HBP}</td><td>${stats.SO}</td>
+          <td>${stats.WP}</td><td>${stats.BK}</td>
           <td>${stats.OPS_AGAINST.toFixed(3)}</td><td>${(stats.K_RATE * 100).toFixed(1)}%</td>
         `;
         tbody.appendChild(tr);

@@ -44,5 +44,23 @@ const doublesTripleHrRecords = [
 const cStats = groupByPlayer(doublesTripleHrRecords).get("C");
 // total bases = 2 + 3 + 4 = 9, AB = 4 -> SLG = 2.25
 assert.ok(Math.abs(cStats.SLG - 2.25) < 1e-9);
+assert.strictEqual(cStats.TB, 9);
+assert.ok(Math.abs(cStats.XBH_H - 1) < 1e-9); // all 3 hits are extra-base hits
+
+const extraStatRecords = [
+  { player_name: "D", result: "1B" },
+  { player_name: "D", result: "BB", is_ibb: true },
+  { player_name: "D", result: "SAC" },
+  { player_name: "D", result: "SF" },
+  { player_name: "D", result: "OUT", is_gidp: true },
+  { player_name: "D", result: "SO" },
+];
+const dStats = groupByPlayer(extraStatRecords).get("D");
+assert.strictEqual(dStats.IBB, 1);
+assert.strictEqual(dStats.SAC, 1);
+assert.strictEqual(dStats.SF, 1);
+assert.strictEqual(dStats.GIDP, 1);
+assert.strictEqual(dStats["1B"], 1);
+assert.ok(Math.abs(dStats.BB_K - 1) < 1e-9); // 1 BB / 1 SO
 
 console.log("all batter page tests passed");

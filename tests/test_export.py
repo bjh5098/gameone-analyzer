@@ -1,6 +1,14 @@
 import sqlite3
 
-from gameone_analyzer.export import classify_result, assign_pitcher_to_innings, export_pitcher_view_records
+from gameone_analyzer.export import (
+    classify_result,
+    assign_pitcher_to_innings,
+    export_pitcher_view_records,
+    is_intentional_walk,
+    is_gidp,
+    has_wild_pitch,
+    has_balk,
+)
 from gameone_analyzer.parser import PitcherRow
 
 
@@ -50,6 +58,38 @@ def test_classify_result_unknown_defaults_other():
 
 def test_classify_result_strikeout_reached_counts_as_reached_on_error_style():
     assert classify_result(["낫아웃+"]) == "REACHED"
+
+
+def test_is_intentional_walk_true():
+    assert is_intentional_walk(["고의4구"]) is True
+
+
+def test_is_intentional_walk_false_for_regular_walk():
+    assert is_intentional_walk(["4구"]) is False
+
+
+def test_is_gidp_true():
+    assert is_gidp(["유땅병살"]) is True
+
+
+def test_is_gidp_false_for_regular_groundout():
+    assert is_gidp(["유땅"]) is False
+
+
+def test_has_wild_pitch_true_when_present_anywhere_in_chain():
+    assert has_wild_pitch(["4구", "도루", "폭투"]) is True
+
+
+def test_has_wild_pitch_false_when_absent():
+    assert has_wild_pitch(["4구", "도루"]) is False
+
+
+def test_has_balk_true_when_present_anywhere_in_chain():
+    assert has_balk(["4구", "보크"]) is True
+
+
+def test_has_balk_false_when_absent():
+    assert has_balk(["4구"]) is False
 
 
 def test_assign_pitcher_to_innings_simple():

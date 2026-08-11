@@ -27,13 +27,36 @@ RESULT_MAP = {
 }
 
 
-def classify_result(events_codes: list) -> str:
+def _primary_event_type(events_codes: list):
     for code in events_codes:
         event_type = classify(code)
         if event_type == EventType.NOT_A_PLATE_APPEARANCE:
             continue
-        return RESULT_MAP.get(event_type, "OTHER")
-    return "OTHER"
+        return event_type
+    return None
+
+
+def classify_result(events_codes: list) -> str:
+    event_type = _primary_event_type(events_codes)
+    if event_type is None:
+        return "OTHER"
+    return RESULT_MAP.get(event_type, "OTHER")
+
+
+def is_intentional_walk(events_codes: list) -> bool:
+    return _primary_event_type(events_codes) == EventType.INTENTIONAL_WALK
+
+
+def is_gidp(events_codes: list) -> bool:
+    return _primary_event_type(events_codes) == EventType.DOUBLE_PLAY
+
+
+def has_wild_pitch(events_codes: list) -> bool:
+    return any(classify(code) == EventType.WILD_PITCH for code in events_codes)
+
+
+def has_balk(events_codes: list) -> bool:
+    return any(classify(code) == EventType.BALK for code in events_codes)
 
 
 def _parse_innings_pitched(text: str) -> float:
@@ -87,6 +110,10 @@ def export_pitcher_view_records(conn: sqlite3.Connection, pitcher_innings_by_gam
             "cell_text": row["cell_text"],
             "events": events_codes,
             "result": classify_result(events_codes),
+            "is_ibb": is_intentional_walk(events_codes),
+            "is_gidp": is_gidp(events_codes),
+            "has_wp": has_wild_pitch(events_codes),
+            "has_bk": has_balk(events_codes),
         })
     return records
 
@@ -117,5 +144,7 @@ def export_all_plate_appearances(conn: sqlite3.Connection) -> list:
             "cell_text": row["cell_text"],
             "events": events_codes,
             "result": classify_result(events_codes),
+            "is_ibb": is_intentional_walk(events_codes),
+            "is_gidp": is_gidp(events_codes),
         })
     return records

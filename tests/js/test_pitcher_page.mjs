@@ -30,4 +30,18 @@ assert.ok(Math.abs(minho.K_RATE - (1 / 3)) < 1e-9); // 1 SO out of 3 BF
 const junho = byPitcher.get("박준호");
 assert.ok(Math.abs(junho.SLG_AGAINST - 4) < 1e-9); // HR in 1 AB -> 4 total bases / 1 AB
 
+const extraStatRecords = [
+  { pitcher_name: "E", result: "BB", is_ibb: true },
+  { pitcher_name: "E", result: "SAC" },
+  { pitcher_name: "E", result: "SF" },
+  { pitcher_name: "E", result: "OUT", has_wp: true },
+  { pitcher_name: "E", result: "OUT", has_bk: true },
+];
+const eStats = groupByPitcher(extraStatRecords).get("E");
+assert.strictEqual(eStats.IBB, 1);
+assert.strictEqual(eStats.SAC, 1);
+assert.strictEqual(eStats.SF, 1);
+assert.strictEqual(eStats.WP, 1);
+assert.strictEqual(eStats.BK, 1);
+
 console.log("all pitcher page tests passed");

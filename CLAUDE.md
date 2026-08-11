@@ -113,6 +113,21 @@ for inning in 1..N:
      "(대회)"로 별도 분류, 시즌별로 이름이 바뀐 동일 리그는 체크박스 병합 —
      `docs/js/league-label.js` (아래 "리그별 구장/부수 매핑" 섹션 참고)
    - 야구 스탯 사이트 느낌의 UI 리디자인 — `docs/css/style.css`
+   - 시즌 필터를 폼 최상단으로 이동
+6. gameone.kr 공식 랭킹 페이지(`/club/info/ranking/hitter`, `/club/info/ranking/pitcher`,
+   club_idx=31993) 컬럼을 참고해 추가 스탯 반영 (컬럼 순서도 랭킹 페이지 순서에 맞춤):
+   - 타자: 1루타, 루타(TB), 희타(SAC), 희비(SF), 고의4구(IBB), 병살(GIDP), 장타율(SLG),
+     BB/K, 장타/안타(XBH/H) — `src/gameone_analyzer/export.py`의
+     `is_intentional_walk`/`is_gidp`, `docs/js/batter-page.js`
+   - 투수: 희타, 희비, 고의4구, 폭투(WP), 보크(BK) — `export.py`의
+     `has_wild_pitch`/`has_balk`, `docs/js/pitcher-page.js`
+   - **의도적으로 제외한 항목**: 득점(R)/타점(RBI)/도루(SB)/방어율(ERA)/이닝(IP)/WHIP/
+     승패. 이유: (1) 득점/타점/도루는 "어떤 주자가 득점했는지"를 코드만으로 특정 선수에게
+     귀속시킬 수 없음 (2) 방어율/이닝/WHIP/승패는 경기 전체 단위 기록이라 아웃카운트·
+     주자상황 등 타석 단위 부분 필터링과 개념적으로 안 맞음(필터링된 부분 타석만으로는
+     "이닝"이 성립하지 않음). 득점 시뮬레이션 정확도를 실제로 검증해본 결과 팀 합계
+     기준 스코어보드 대비 약 21% 과소집계(569 vs 721, 95경기 전체 합산)로 나타나
+     선수 귀속은 물론 팀 합계로도 신뢰할 수 없다고 판단.
 
 ## 리그별 구장/부수 매핑 (사용자 확인, `docs/js/league-label.js`에 구현)
 

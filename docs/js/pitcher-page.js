@@ -2,10 +2,14 @@ const HIT_RESULTS = new Set(["1B", "2B", "3B", "HR"]);
 const AB_EXCLUDED_RESULTS = new Set(["BB", "HBP", "SF", "SAC", "OTHER"]);
 
 function emptyStats() {
-  return { BF: 0, AB_AGAINST: 0, H: 0, BB: 0, HBP: 0, SO: 0, "2B": 0, "3B": 0, HR: 0 };
+  return {
+    BF: 0, AB_AGAINST: 0, H: 0, BB: 0, IBB: 0, HBP: 0, SO: 0,
+    "2B": 0, "3B": 0, HR: 0, SAC: 0, SF: 0, WP: 0, BK: 0,
+  };
 }
 
-function accumulate(stats, result) {
+function accumulate(stats, record) {
+  const result = record.result;
   stats.BF += 1;
   if (!AB_EXCLUDED_RESULTS.has(result)) {
     stats.AB_AGAINST += 1;
@@ -15,8 +19,13 @@ function accumulate(stats, result) {
   if (result === "3B") stats["3B"] += 1;
   if (result === "HR") stats.HR += 1;
   if (result === "BB") stats.BB += 1;
+  if (record.is_ibb) stats.IBB += 1;
   if (result === "HBP") stats.HBP += 1;
   if (result === "SO") stats.SO += 1;
+  if (result === "SAC") stats.SAC += 1;
+  if (result === "SF") stats.SF += 1;
+  if (record.has_wp) stats.WP += 1;
+  if (record.has_bk) stats.BK += 1;
 }
 
 function finalize(stats) {
@@ -34,7 +43,7 @@ function finalize(stats) {
 function computePitcherStats(records) {
   const stats = emptyStats();
   for (const record of records) {
-    accumulate(stats, record.result);
+    accumulate(stats, record);
   }
   return finalize(stats);
 }
@@ -45,7 +54,7 @@ function groupByPitcher(records) {
     if (!map.has(record.pitcher_name)) {
       map.set(record.pitcher_name, emptyStats());
     }
-    accumulate(map.get(record.pitcher_name), record.result);
+    accumulate(map.get(record.pitcher_name), record);
   }
   for (const stats of map.values()) {
     finalize(stats);

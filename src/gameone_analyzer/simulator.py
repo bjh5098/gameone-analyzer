@@ -123,19 +123,27 @@ def apply_events(state: RunnerState, outs: int, event_codes: list):
 
 
 def simulate_team_innings(rows: list, team: str) -> list:
+    team_rows = [row for row in rows if row.team == team]
+    if not team_rows:
+        return []
+    lineup_size = max(row.order for row in team_rows)
+
     by_inning = {}
-    for row in rows:
-        if row.team != team:
-            continue
+    for row in team_rows:
         for inning_idx, cell in enumerate(row.cells, start=1):
             if cell:
                 by_inning.setdefault(inning_idx, []).append((row.order, row.name, cell))
 
     result = []
+    last_order = 0
     for inning in sorted(by_inning.keys()):
         state = RunnerState(False, False, False)
         outs = 0
-        for order, name, cell_text in by_inning[inning]:
+        batters = sorted(
+            by_inning[inning],
+            key=lambda item: (item[0] - last_order - 1) % lineup_size,
+        )
+        for order, name, cell_text in batters:
             is_risp = state.second or state.third
             events_list = parse_cell(cell_text)
             result.append(
@@ -152,5 +160,6 @@ def simulate_team_innings(rows: list, team: str) -> list:
                 )
             )
             state, outs, _runs = apply_events(state, outs, events_list)
+            last_order = order
 
     return result

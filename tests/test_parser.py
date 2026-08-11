@@ -28,22 +28,28 @@ def test_parse_batter_rows_first_batter():
     assert len(away_rows) > 0
     assert len(home_rows) > 0
 
+    # h3 team headings verified: away batter table lists 박준호/기효석/천준태...
+    # (성동 바이퍼스 roster), home batter table lists 홍정렬/김동욱/이준희...
+    # (한양대학교 D-Dogs OB roster).
+    first_away = away_rows[0]
+    assert first_away.order == 1
+    assert first_away.name == "박준호"
+    assert first_away.uniform_no == "53"
+    assert first_away.position == "중"
+    assert first_away.cells[0] == "4구,도루,도루"
+    assert first_away.cells[1] == "4구,도루,도루"
+    assert first_away.cells[2] == "4구"
+    assert first_away.cells[3] == ""
+    assert len(first_away.cells) == 12
+
     first_home = home_rows[0]
-    assert first_home.order == 1
-    assert first_home.name == "박준호"
-    assert first_home.uniform_no == "53"
-    assert first_home.position == "중"
-    assert first_home.cells[0] == "4구,도루,도루"
-    assert first_home.cells[1] == "4구,도루,도루"
-    assert first_home.cells[2] == "4구"
-    assert first_home.cells[3] == ""
-    assert len(first_home.cells) == 12
+    assert first_home.name == "홍정렬"
 
 
-def test_parse_batter_rows_third_home_batter():
+def test_parse_batter_rows_third_away_batter():
     rows = parse_batter_rows(_html())
-    home_rows = [r for r in rows if r.team == "home"]
-    third = home_rows[2]
+    away_rows = [r for r in rows if r.team == "away"]
+    third = away_rows[2]
     assert third.name == "천준태"
     assert third.cells[0] == "좌안"
     assert third.cells[1] == "유플"
@@ -52,9 +58,9 @@ def test_parse_batter_rows_third_home_batter():
 
 def test_parse_pitcher_rows():
     rows = parse_pitcher_rows(_html())
-    home_pitchers = [r for r in rows if r.team == "home"]
-    assert home_pitchers[0].name == "민호진"
-    assert home_pitchers[0].innings_pitched_str == "2 ⅓"
-    assert home_pitchers[0].order == 1
-    assert home_pitchers[1].name == "박준호"
-    assert home_pitchers[1].order == 2
+    away_pitchers = [r for r in rows if r.team == "away"]
+    assert away_pitchers[0].name == "민호진"
+    assert away_pitchers[0].innings_pitched_str == "2 ⅓"
+    assert away_pitchers[0].order == 1
+    assert away_pitchers[1].name == "박준호"
+    assert away_pitchers[1].order == 2

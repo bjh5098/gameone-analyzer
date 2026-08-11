@@ -85,7 +85,7 @@ def parse_batter_rows(html: str) -> list:
     assert len(tables) == 2, f"expected 2 batter tables, found {len(tables)}"
 
     result = []
-    for team_key, table in zip(("home", "away"), tables):
+    for team_key, table in zip(("away", "home"), tables):
         for tr in table.find("tbody").find_all("tr"):
             th = tr.find("th")
             order = int(th.find("span", class_="num").get_text(strip=True))
@@ -118,7 +118,7 @@ def parse_pitcher_rows(html: str) -> list:
     assert len(tables) == 2, f"expected 2 pitcher tables, found {len(tables)}"
 
     result = []
-    for team_key, table in zip(("home", "away"), tables):
+    for team_key, table in zip(("away", "home"), tables):
         for order, tr in enumerate(table.find("tbody").find_all("tr"), start=1):
             th = tr.find("th")
             strong = th.find("strong")

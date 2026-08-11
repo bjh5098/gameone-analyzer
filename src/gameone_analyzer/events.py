@@ -85,7 +85,8 @@ ERROR_SUFFIX = "실"
 def parse_cell(cell_text: str) -> list:
     if not cell_text:
         return []
-    return [part.strip() for part in cell_text.split(",") if part.strip()]
+    normalized = cell_text.replace("/", ",")
+    return [part.strip() for part in normalized.split(",") if part.strip()]
 
 
 def classify(code: str) -> EventType:

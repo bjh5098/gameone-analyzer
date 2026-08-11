@@ -68,7 +68,22 @@
   </p>
   <table id="playerStatsTable">
     <thead>
-      <tr><th>선수</th><th>PA</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>HBP</th><th>SO</th><th>AVG</th><th>OBP</th><th>OPS</th><th>K%</th></tr>
+      <tr>
+        <th data-sort-key="name">선수</th>
+        <th data-sort-key="PA">PA</th>
+        <th data-sort-key="AB">AB</th>
+        <th data-sort-key="H">H</th>
+        <th data-sort-key="2B">2B</th>
+        <th data-sort-key="3B">3B</th>
+        <th data-sort-key="HR">HR</th>
+        <th data-sort-key="BB">BB</th>
+        <th data-sort-key="HBP">HBP</th>
+        <th data-sort-key="SO">SO</th>
+        <th data-sort-key="AVG">AVG</th>
+        <th data-sort-key="OBP">OBP</th>
+        <th data-sort-key="OPS">OPS</th>
+        <th data-sort-key="K_RATE">K%</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -77,8 +92,10 @@
     import { buildFilterState, matchesFilter } from "./js/filters.js";
     import { loadJSON } from "./js/data-loader.js";
     import { computeBatterStats, groupByPlayer } from "./js/batter-page.js";
+    import { sortEntries, nextSortState } from "./js/table-sort.js";
 
     let allRecords = [];
+    let sortState = { key: "PA", direction: "desc" };
 
     function renderTeamStats(stats) {
       const el = document.getElementById("teamStats");
@@ -89,12 +106,22 @@
       `;
     }
 
+    function updateSortIndicators() {
+      const headers = document.querySelectorAll("#playerStatsTable th[data-sort-key]");
+      for (const th of headers) {
+        th.classList.remove("sorted-asc", "sorted-desc");
+        if (th.dataset.sortKey === sortState.key) {
+          th.classList.add(sortState.direction === "asc" ? "sorted-asc" : "sorted-desc");
+        }
+      }
+    }
+
     function renderPlayerTable(byPlayer, minPa) {
       const tbody = document.querySelector("#playerStatsTable tbody");
       tbody.innerHTML = "";
-      const sorted = Array.from(byPlayer.entries())
-        .filter(([, stats]) => stats.PA >= minPa)
-        .sort((a, b) => b[1].PA - a[1].PA);
+      const filtered = Array.from(byPlayer.entries()).filter(([, stats]) => stats.PA >= minPa);
+      const sorted = sortEntries(filtered, sortState.key, sortState.direction);
+      updateSortIndicators();
       for (const [name, stats] of sorted) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -147,6 +174,13 @@
         applyFilterAndRender();
       });
       document.getElementById("minPaInput").addEventListener("input", applyFilterAndRender);
+
+      document.querySelectorAll("#playerStatsTable th[data-sort-key]").forEach((th) => {
+        th.addEventListener("click", () => {
+          sortState = nextSortState(sortState, th.dataset.sortKey);
+          applyFilterAndRender();
+        });
+      });
     }
 
     init();

@@ -46,6 +46,26 @@ thead th {
   background: #f5f5f5;
 }
 
+th[data-sort-key] {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+th[data-sort-key]:hover {
+  background: #e8e8e8;
+}
+
+th[data-sort-key].sorted-asc::after {
+  content: " ▲";
+  font-size: 0.75em;
+}
+
+th[data-sort-key].sorted-desc::after {
+  content: " ▼";
+  font-size: 0.75em;
+}
+
 button[type="submit"] {
   padding: 0.5rem 1rem;
   cursor: pointer;

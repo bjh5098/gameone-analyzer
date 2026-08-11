@@ -68,7 +68,20 @@
   </p>
   <table id="pitcherStatsTable">
     <thead>
-      <tr><th>투수</th><th>BF</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>HBP</th><th>SO</th><th>피안타율</th><th>피OPS</th><th>K%</th></tr>
+      <tr>
+        <th data-sort-key="name">투수</th>
+        <th data-sort-key="BF">BF</th>
+        <th data-sort-key="H">H</th>
+        <th data-sort-key="2B">2B</th>
+        <th data-sort-key="3B">3B</th>
+        <th data-sort-key="HR">HR</th>
+        <th data-sort-key="BB">BB</th>
+        <th data-sort-key="HBP">HBP</th>
+        <th data-sort-key="SO">SO</th>
+        <th data-sort-key="AVG_AGAINST">피안타율</th>
+        <th data-sort-key="OPS_AGAINST">피OPS</th>
+        <th data-sort-key="K_RATE">K%</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -77,8 +90,10 @@
     import { buildFilterState, matchesFilter } from "./js/filters.js";
     import { loadJSON } from "./js/data-loader.js";
     import { computePitcherStats, groupByPitcher } from "./js/pitcher-page.js";
+    import { sortEntries, nextSortState } from "./js/table-sort.js";
 
     let allRecords = [];
+    let sortState = { key: "BF", direction: "desc" };
 
     function renderTeamStats(stats) {
       const el = document.getElementById("teamStats");
@@ -89,13 +104,24 @@
       `;
     }
 
+    function updateSortIndicators() {
+      const headers = document.querySelectorAll("#pitcherStatsTable th[data-sort-key]");
+      for (const th of headers) {
+        th.classList.remove("sorted-asc", "sorted-desc");
+        if (th.dataset.sortKey === sortState.key) {
+          th.classList.add(sortState.direction === "asc" ? "sorted-asc" : "sorted-desc");
+        }
+      }
+    }
+
     function renderPitcherTable(byPitcher, minBf) {
       const tbody = document.querySelector("#pitcherStatsTable tbody");
       tbody.innerHTML = "";
-      const sorted = Array.from(byPitcher.entries())
+      const filtered = Array.from(byPitcher.entries())
         .filter(([name]) => name !== "UNKNOWN")
-        .filter(([, stats]) => stats.BF >= minBf)
-        .sort((a, b) => b[1].BF - a[1].BF);
+        .filter(([, stats]) => stats.BF >= minBf);
+      const sorted = sortEntries(filtered, sortState.key, sortState.direction);
+      updateSortIndicators();
       for (const [name, stats] of sorted) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -148,6 +174,13 @@
         applyFilterAndRender();
       });
       document.getElementById("minPaInput").addEventListener("input", applyFilterAndRender);
+
+      document.querySelectorAll("#pitcherStatsTable th[data-sort-key]").forEach((th) => {
+        th.addEventListener("click", () => {
+          sortState = nextSortState(sortState, th.dataset.sortKey);
+          applyFilterAndRender();
+        });
+      });
     }
 
     init();

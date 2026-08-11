@@ -9,6 +9,12 @@
 
 ## 대기열
 
+(현재 없음 — 95경기 전부 수집·파싱 완료, 아래 "분석 완료" 참조)
+
+## 분석 완료
+
+<!-- 분석이 끝난 URL을 여기로 옮깁니다 -->
+
 ### 2024시즌 (34경기)
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1563168
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1563175
@@ -109,7 +115,3 @@ https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=16981
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1698139
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1707338
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1707342
-
-## 분석 완료
-
-<!-- 분석이 끝난 URL을 여기로 옮깁니다 -->

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>타자 분석 - D-Dogs OB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">홈</a>
+    <a href="batter.html" class="active">타자 분석</a>
+    <a href="pitcher.html">투수 분석</a>
+  </nav>
+  <h1>타자 분석 (한양대학교 D-Dogs OB)</h1>
+
+  <form id="filterForm">
+    <fieldset>
+      <legend>아웃카운트</legend>
+      <label><input type="checkbox" name="outs" value="0" /> 무사</label>
+      <label><input type="checkbox" name="outs" value="1" /> 1사</label>
+      <label><input type="checkbox" name="outs" value="2" /> 2사</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>주자상황</legend>
+      <label><input type="checkbox" name="runnerState" value="empty" /> 주자없음</label>
+      <label><input type="checkbox" name="runnerState" value="1" /> 1루</label>
+      <label><input type="checkbox" name="runnerState" value="2" /> 2루</label>
+      <label><input type="checkbox" name="runnerState" value="3" /> 3루</label>
+      <label><input type="checkbox" name="runnerState" value="12" /> 1·2루</label>
+      <label><input type="checkbox" name="runnerState" value="13" /> 1·3루</label>
+      <label><input type="checkbox" name="runnerState" value="23" /> 2·3루</label>
+      <label><input type="checkbox" name="runnerState" value="123" /> 만루</label>
+      <label><input type="checkbox" name="rispOnly" /> 득점권만</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>시즌</legend>
+      <label><input type="checkbox" name="season" value="2024" /> 2024</label>
+      <label><input type="checkbox" name="season" value="2025" /> 2025</label>
+      <label><input type="checkbox" name="season" value="2026" /> 2026</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>리그</legend>
+      <div id="leagueCheckboxes"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>구장 그룹</legend>
+      <select name="venueGroup" id="venueGroupSelect">
+        <option value="">전체</option>
+      </select>
+    </fieldset>
+
+    <button type="submit">필터 적용</button>
+  </form>
+
+  <h2>팀 전체 스탯</h2>
+  <div id="teamStats"></div>
+
+  <h2>선수별 스탯</h2>
+  <table id="playerStatsTable">
+    <thead>
+      <tr><th>선수</th><th>PA</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>HBP</th><th>SO</th><th>AVG</th><th>OBP</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { buildFilterState, matchesFilter } from "./js/filters.js";
+    import { loadJSON } from "./js/data-loader.js";
+    import { computeBatterStats, groupByPlayer } from "./js/batter-page.js";
+
+    let allRecords = [];
+
+    function renderTeamStats(stats) {
+      const el = document.getElementById("teamStats");
+      el.innerHTML = `
+        <p>PA: ${stats.PA} / AB: ${stats.AB} / H: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR}</p>
+        <p>BB: ${stats.BB} / HBP: ${stats.HBP} / SO: ${stats.SO}</p>
+        <p>AVG: ${stats.AVG.toFixed(3)} / OBP: ${stats.OBP.toFixed(3)}</p>
+      `;
+    }
+
+    function renderPlayerTable(byPlayer) {
+      const tbody = document.querySelector("#playerStatsTable tbody");
+      tbody.innerHTML = "";
+      const sorted = Array.from(byPlayer.entries()).sort((a, b) => b[1].PA - a[1].PA);
+      for (const [name, stats] of sorted) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${name}</td><td>${stats.PA}</td><td>${stats.AB}</td><td>${stats.H}</td>
+          <td>${stats["2B"]}</td><td>${stats["3B"]}</td><td>${stats.HR}</td>
+          <td>${stats.BB}</td><td>${stats.HBP}</td><td>${stats.SO}</td>
+          <td>${stats.AVG.toFixed(3)}</td><td>${stats.OBP.toFixed(3)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function populateLeagueCheckboxes(records) {
+      const leagues = Array.from(new Set(records.map((r) => r.league))).sort();
+      const container = document.getElementById("leagueCheckboxes");
+      container.innerHTML = leagues
+        .map((l) => `<label><input type="checkbox" name="league" value="${l}" /> ${l}</label>`)
+        .join("");
+    }
+
+    function populateVenueGroups(records) {
+      const venues = Array.from(new Set(records.map((r) => r.venue.replace(/\s+/g, "")))).sort();
+      const select = document.getElementById("venueGroupSelect");
+      for (const v of venues) {
+        const option = document.createElement("option");
+        option.value = JSON.stringify([v]);
+        option.textContent = v;
+        select.appendChild(option);
+      }
+    }
+
+    function applyFilterAndRender() {
+      const form = document.getElementById("filterForm");
+      const filterState = buildFilterState(form);
+      const filtered = allRecords.filter((r) => matchesFilter(r, filterState));
+      renderTeamStats(computeBatterStats(filtered));
+      renderPlayerTable(groupByPlayer(filtered));
+    }
+
+    async function init() {
+      allRecords = await loadJSON("data_batter.json");
+      populateLeagueCheckboxes(allRecords);
+      populateVenueGroups(allRecords);
+      applyFilterAndRender();
+
+      document.getElementById("filterForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        applyFilterAndRender();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

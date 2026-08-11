@@ -27,4 +27,22 @@ assert.strictEqual(byPlayer.get("B").AB, 2);
 // AVG/OBP sanity
 assert.ok(Math.abs(byPlayer.get("A").AVG - 0.5) < 1e-9);
 
+// SLG/OPS: A = 1B (1B counts as 1 total base) in 2 AB -> SLG 0.5, OPS = OBP+SLG
+const aStats = byPlayer.get("A");
+assert.ok(Math.abs(aStats.SLG - 0.5) < 1e-9);
+assert.ok(Math.abs(aStats.OPS - (aStats.OBP + aStats.SLG)) < 1e-9);
+
+// K rate: A has 1 SO out of 3 PA
+assert.ok(Math.abs(aStats.K_RATE - (1 / 3)) < 1e-9);
+
+const doublesTripleHrRecords = [
+  { player_name: "C", result: "2B" },
+  { player_name: "C", result: "3B" },
+  { player_name: "C", result: "HR" },
+  { player_name: "C", result: "OUT" },
+];
+const cStats = groupByPlayer(doublesTripleHrRecords).get("C");
+// total bases = 2 + 3 + 4 = 9, AB = 4 -> SLG = 2.25
+assert.ok(Math.abs(cStats.SLG - 2.25) < 1e-9);
+
 console.log("all batter page tests passed");

@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>타자 분석 - D-Dogs OB</title>
+  <title>투수 분석 - D-Dogs OB</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <nav>
     <a href="index.html">홈</a>
-    <a href="batter.html" class="active">타자 분석</a>
-    <a href="pitcher.html">투수 분석</a>
+    <a href="batter.html">타자 분석</a>
+    <a href="pitcher.html" class="active">투수 분석</a>
   </nav>
-  <h1>타자 분석 (한양대학교 D-Dogs OB)</h1>
+  <h1>투수 분석 (한양대학교 D-Dogs OB)</h1>
 
   <form id="filterForm">
     <fieldset>
@@ -57,18 +57,18 @@
     <button type="submit">필터 적용</button>
   </form>
 
-  <h2>팀 전체 스탯</h2>
+  <h2>팀 전체 피안타 스탯</h2>
   <div id="teamStats"></div>
 
-  <h2>선수별 스탯</h2>
+  <h2>투수별 스탯</h2>
   <p>
-    <label for="minPaInput">최소 PA</label>
+    <label for="minPaInput">최소 BF</label>
     <input type="number" id="minPaInput" min="0" step="1" value="0" style="width: 4rem;" />
-    <span>(허수 방지용 — 이 값 이상인 선수만 표시)</span>
+    <span>(허수 방지용 — 이 값 이상인 투수만 표시)</span>
   </p>
-  <table id="playerStatsTable">
+  <table id="pitcherStatsTable">
     <thead>
-      <tr><th>선수</th><th>PA</th><th>AB</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>HBP</th><th>SO</th><th>AVG</th><th>OBP</th><th>OPS</th><th>K%</th></tr>
+      <tr><th>투수</th><th>BF</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>BB</th><th>HBP</th><th>SO</th><th>피안타율</th><th>피OPS</th><th>K%</th></tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -76,33 +76,34 @@
   <script type="module">
     import { buildFilterState, matchesFilter } from "./js/filters.js";
     import { loadJSON } from "./js/data-loader.js";
-    import { computeBatterStats, groupByPlayer } from "./js/batter-page.js";
+    import { computePitcherStats, groupByPitcher } from "./js/pitcher-page.js";
 
     let allRecords = [];
 
     function renderTeamStats(stats) {
       const el = document.getElementById("teamStats");
       el.innerHTML = `
-        <p>PA: ${stats.PA} / AB: ${stats.AB} / H: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR}</p>
+        <p>BF: ${stats.BF} / H: ${stats.H} / 2B: ${stats["2B"]} / 3B: ${stats["3B"]} / HR: ${stats.HR}</p>
         <p>BB: ${stats.BB} / HBP: ${stats.HBP} / SO: ${stats.SO}</p>
-        <p>AVG: ${stats.AVG.toFixed(3)} / OBP: ${stats.OBP.toFixed(3)}</p>
+        <p>피안타율: ${stats.AVG_AGAINST.toFixed(3)}</p>
       `;
     }
 
-    function renderPlayerTable(byPlayer, minPa) {
-      const tbody = document.querySelector("#playerStatsTable tbody");
+    function renderPitcherTable(byPitcher, minBf) {
+      const tbody = document.querySelector("#pitcherStatsTable tbody");
       tbody.innerHTML = "";
-      const sorted = Array.from(byPlayer.entries())
-        .filter(([, stats]) => stats.PA >= minPa)
-        .sort((a, b) => b[1].PA - a[1].PA);
+      const sorted = Array.from(byPitcher.entries())
+        .filter(([name]) => name !== "UNKNOWN")
+        .filter(([, stats]) => stats.BF >= minBf)
+        .sort((a, b) => b[1].BF - a[1].BF);
       for (const [name, stats] of sorted) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${name}</td><td>${stats.PA}</td><td>${stats.AB}</td><td>${stats.H}</td>
+          <td>${name}</td><td>${stats.BF}</td><td>${stats.H}</td>
           <td>${stats["2B"]}</td><td>${stats["3B"]}</td><td>${stats.HR}</td>
           <td>${stats.BB}</td><td>${stats.HBP}</td><td>${stats.SO}</td>
-          <td>${stats.AVG.toFixed(3)}</td><td>${stats.OBP.toFixed(3)}</td>
-          <td>${stats.OPS.toFixed(3)}</td><td>${(stats.K_RATE * 100).toFixed(1)}%</td>
+          <td>${stats.AVG_AGAINST.toFixed(3)}</td>
+          <td>${stats.OPS_AGAINST.toFixed(3)}</td><td>${(stats.K_RATE * 100).toFixed(1)}%</td>
         `;
         tbody.appendChild(tr);
       }
@@ -131,13 +132,13 @@
       const form = document.getElementById("filterForm");
       const filterState = buildFilterState(form);
       const filtered = allRecords.filter((r) => matchesFilter(r, filterState));
-      const minPa = parseInt(document.getElementById("minPaInput").value, 10) || 0;
-      renderTeamStats(computeBatterStats(filtered));
-      renderPlayerTable(groupByPlayer(filtered), minPa);
+      const minBf = parseInt(document.getElementById("minPaInput").value, 10) || 0;
+      renderTeamStats(computePitcherStats(filtered));
+      renderPitcherTable(groupByPitcher(filtered), minBf);
     }
 
     async function init() {
-      allRecords = await loadJSON("data_batter.json");
+      allRecords = await loadJSON("data_pitcher.json");
       populateLeagueCheckboxes(allRecords);
       populateVenueGroups(allRecords);
       applyFilterAndRender();

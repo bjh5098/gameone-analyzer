@@ -9,6 +9,26 @@ const LEAGUE_TAGS = {
   "수요 야간": "4부",
 };
 
+// "N부"만으로는 어느 구장(리그)인지 구분이 안 된다는 피드백에 따라, 부수가
+// 확인된 정기 리그는 요일+구장별칭+부수 형태의 명시적 체크박스 라벨을 쓴다
+// (예: "일요배명3부", "수요성동4부" - 사용자가 준 예시 그대로).
+// 살곶이야구장의 구장별칭은 "성동"으로 확정(사용자 확인).
+const CONFIRMED_CHECKBOX_LABELS = {
+  "일요 싱글": "일요성동3부",
+  "수요 야간": "수요성동4부",
+  "일요메이져": "일요배재고3부",
+  "일요 3부": "일요배명3부",
+  // 일요리그(C조)는 성남고/성남중 두 구장에 걸쳐 있어 특정 구장명 대신
+  // 지역 별칭 "성남"을 씀(살곶이야구장 -> "성동"과 동일한 방식).
+  "일요리그(C조)": "일요성남4부",
+};
+
+// 부수는 미확인이지만 구장은 확인된 리그 - 구장별칭만 붙여 위치는 식별
+// 가능하게 하고, 부수를 추측하지는 않는다.
+const VENUE_ONLY_CHECKBOX_LABELS = {
+  "원외리그": "성동원외리그",
+};
+
 // 대회성 리그(정기 리그가 아닌 단발성 대회)는 부수 표기 대상이 아니다.
 // 이런 리그는 항상 원래 명칭을 유지한다.
 const TOURNAMENT_LEAGUES = new Set([
@@ -64,24 +84,22 @@ function formatLeagueLabel(season, league, venue) {
 }
 
 // League checkbox filters are keyed by league name alone (independent of
-// season/venue), so the checkbox label shows the original name (whitespace
-// removed) with its division tag appended directly, e.g. "수요야간4부" or
-// "일요싱글3부" - never the season/venue-qualified form from
-// formatLeagueLabel, which would misleadingly imply the checkbox is scoped
-// to one season/venue. Tournament leagues keep their full spaced name with
-// a "(대회)" suffix so they read as a distinct category, not a division.
+// season/venue). A bare division tag like "일요싱글3부" doesn't say WHERE
+// the league plays, so confirmed leagues get an explicit
+// weekday+venue+division label instead, e.g. "일요배명3부", "수요성동4부"
+// (matches the user's own examples). Tournament leagues keep their full
+// spaced name with a "(대회)" suffix so they read as a distinct category.
 function leagueCheckboxLabel(league) {
   if (isTournamentLeague(league)) {
     return `${league} (대회)`;
   }
-  const compact = league.replace(/\s+/g, "");
-  const tag = LEAGUE_TAGS[league];
-  // Skip appending the tag if the compacted name already ends with it
-  // (e.g. "일요 3부" -> "일요3부", not "일요3부3부").
-  if (tag && !compact.endsWith(tag)) {
-    return `${compact}${tag}`;
+  if (CONFIRMED_CHECKBOX_LABELS[league]) {
+    return CONFIRMED_CHECKBOX_LABELS[league];
   }
-  return compact;
+  if (VENUE_ONLY_CHECKBOX_LABELS[league]) {
+    return VENUE_ONLY_CHECKBOX_LABELS[league];
+  }
+  return league.replace(/\s+/g, "");
 }
 
 export {

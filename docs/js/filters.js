@@ -1,6 +1,8 @@
 function buildFilterState(formElement) {
   const outs = Array.from(formElement.querySelectorAll('input[name="outs"]:checked'))
     .map((el) => parseInt(el.value, 10));
+  const battingOrders = Array.from(formElement.querySelectorAll('input[name="battingOrder"]:checked'))
+    .map((el) => parseInt(el.value, 10));
   const runnerStates = Array.from(formElement.querySelectorAll('input[name="runnerState"]:checked'))
     .map((el) => el.value);
   const rispOnly = formElement.querySelector('input[name="rispOnly"]').checked;
@@ -13,7 +15,7 @@ function buildFilterState(formElement) {
     ? [JSON.parse(venueGroupSelect.value)]
     : [];
 
-  return { outs, runnerStates, rispOnly, seasons, leagues, venueGroups };
+  return { outs, battingOrders, runnerStates, rispOnly, seasons, leagues, venueGroups };
 }
 
 function normalizeVenue(venue) {
@@ -22,6 +24,9 @@ function normalizeVenue(venue) {
 
 function matchesFilter(record, filterState) {
   if (filterState.outs.length > 0 && !filterState.outs.includes(record.outs_before)) {
+    return false;
+  }
+  if (filterState.battingOrders.length > 0 && !filterState.battingOrders.includes(record.batting_order)) {
     return false;
   }
   if (filterState.rispOnly && !record.is_risp) {

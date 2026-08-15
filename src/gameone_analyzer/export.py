@@ -101,6 +101,7 @@ def export_pitcher_view_records(conn: sqlite3.Connection, pitcher_innings_by_gam
             "venue": row["venue"],
             "pitcher_name": pitcher_name,
             "player_name": row["player_name"],
+            "batting_order": row["batting_order"],
             "inning": row["inning"],
             "outs_before": row["outs_before"],
             "runner_state": runner_state_key(
@@ -135,6 +136,7 @@ def export_all_plate_appearances(conn: sqlite3.Connection) -> list:
             "venue": row["venue"],
             "team_role": row["team"],
             "player_name": row["player_name"],
+            "batting_order": row["batting_order"],
             "inning": row["inning"],
             "outs_before": row["outs_before"],
             "runner_state": runner_state_key(

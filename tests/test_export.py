@@ -3,6 +3,7 @@ import sqlite3
 from gameone_analyzer.export import (
     classify_result,
     assign_pitcher_to_innings,
+    export_all_plate_appearances,
     export_pitcher_view_records,
     is_intentional_walk,
     is_gidp,
@@ -152,3 +153,38 @@ def test_export_pitcher_view_records(tmp_path):
     assert records[0]["pitcher_name"] == "민호진"
     assert records[0]["player_name"] == "OppBatter"
     assert records[0]["result"] == "1B"
+    assert records[0]["batting_order"] == 1
+
+
+def test_export_all_plate_appearances_includes_batting_order(tmp_path):
+    db_path = tmp_path / "t.db"
+    conn = sqlite3.connect(db_path)
+    conn.execute("""
+        CREATE TABLE games (
+            game_idx INTEGER PRIMARY KEY, season INTEGER, league TEXT, venue TEXT,
+            date_str TEXT, away_team TEXT, home_team TEXT, away_runs INTEGER,
+            home_runs INTEGER, validated INTEGER
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE plate_appearances (
+            id INTEGER PRIMARY KEY, game_idx INTEGER, team TEXT, is_our_team INTEGER,
+            inning INTEGER, batting_order INTEGER, player_name TEXT, outs_before INTEGER,
+            runner_first INTEGER, runner_second INTEGER, runner_third INTEGER,
+            is_risp INTEGER, cell_text TEXT
+        )
+    """)
+    conn.execute(
+        "INSERT INTO games VALUES (1, 2025, '일요 싱글', '살곶이야구장', 'd', 'OPP', "
+        "'한양대학교 D-Dogs OB', 3, 5, 1)"
+    )
+    conn.execute(
+        "INSERT INTO plate_appearances VALUES "
+        "(1, 1, 'home', 1, 1, 4, 'OurBatter', 0, 0, 0, 0, 0, '좌안')"
+    )
+    conn.commit()
+
+    records = export_all_plate_appearances(conn)
+    assert len(records) == 1
+    assert records[0]["batting_order"] == 4
+    assert records[0]["player_name"] == "OurBatter"

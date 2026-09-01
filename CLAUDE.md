@@ -98,7 +98,8 @@ for inning in 1..N:
   재수집하려면 `scripts/fetch_all.py` 실행)
 - 파싱·시뮬레이션 결과: `data/gameone.db` (SQLite, `.gitignore`에 포함 — `scripts/build_db.py`로 재생성)
 - 정적 사이트용 JSON: [`docs/data_batter.json`](./docs/data_batter.json),
-  [`docs/data_pitcher.json`](./docs/data_pitcher.json) (git에 커밋됨, `scripts/build_site_data.py`로 재생성)
+  [`docs/data_pitcher.json`](./docs/data_pitcher.json),
+  [`docs/data_roster.json`](./docs/data_roster.json) (git에 커밋됨, `scripts/build_site_data.py`로 재생성)
 
 ## 완료된 작업
 
@@ -136,6 +137,22 @@ for inning in 1..N:
    `data/gameone.db` 캐시로 `export.py`에 `batting_order` 필드 추가 후
    `scripts/build_site_data.py` 재실행만으로 반영. `docs/js/filters.js`(`battingOrders`
    축 추가) + `docs/batter.html`/`pitcher.html`에 1~9번 체크박스(다중선택, OR 조건).
+8. "출장 현황" 탭 추가 (2026-09-01, 팀 채팅에서 송우석 요청 — 풀오버 무료 배포 대상자를
+   올해 참가 경기수 기준으로 뽑기 위함) — 완료. `docs/roster.html` +
+   `docs/js/roster-page.js`, `scripts/build_site_data.py`의 `_build_roster_records`
+   (신규 `docs/data_roster.json`).
+   - **집계 기준**: `plate_appearances`(타석 시뮬레이션 결과) 테이블이 아니라 원본
+     타자기록/투수기록 표를 직접 읽음(`export.py`의 `collect_appearance_names`,
+     `parse_batter_rows`/`parse_pitcher_rows` 재사용) — 대수비만 들어가고 타석에
+     한 번도 안 선 선수는 `plate_appearances`에 안 잡히지만 타자기록표에는 행이
+     남아있어서 이 방식으로만 잡힌다.
+   - 투수/타자 동시 출전 시 게임 단위로 dedup(한 경기 = 1경기, 역할 무관 합산 아님) —
+     타순 필터 때처럼 단순 합계로 처리하면 중복 집계된다는 사용자 피드백 반영.
+   - **의도적으로 범위에서 뺀 것**: 게임원 기록지에 안 잡히는 오프라인 출석/노쇼/지각,
+     개막식·MT 등 행사 참여도. 이유: 기록지 파싱 기반 도구라 "경기에 못 나온 오프라인
+     참석"은 원천적으로 데이터가 없음(사용자도 대화 중 확인) — 내년 이후 위치기반
+     자체 출결 웹앱으로 별도 구축 예정이라고 함. 이 도구는 "게임원 기록지 기준 출장
+     경기수"까지만 우선 제공.
 
 ## 리그별 구장/부수 매핑 (사용자 확인, `docs/js/league-label.js`에 구현)
 

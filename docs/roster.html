@@ -44,7 +44,7 @@
   <div class="table-wrap">
     <table id="rosterTable">
       <thead>
-        <tr>
+        <tr id="rosterHeaderRow">
           <th data-sort-key="name">선수</th>
           <th data-sort-key="2024">2024</th>
           <th data-sort-key="2025">2025</th>
@@ -58,11 +58,20 @@
 
   <script type="module">
     import { loadJSON } from "./js/data-loader.js";
-    import { groupByPlayer, SEASONS } from "./js/roster-page.js";
+    import { groupByPlayer, countTeamGamesBySeason, SEASONS } from "./js/roster-page.js";
     import { sortEntries, nextSortState } from "./js/table-sort.js";
 
     let allRecords = [];
     let sortState = { key: "total", direction: "desc" };
+
+    function renderHeaderLabels(teamGamesBySeason) {
+      for (const season of SEASONS) {
+        const th = document.querySelector(`#rosterHeaderRow th[data-sort-key="${season}"]`);
+        th.textContent = `${season}(${teamGamesBySeason[season]}경기)`;
+      }
+      document.querySelector('#rosterHeaderRow th[data-sort-key="total"]').textContent =
+        `총 경기수(${teamGamesBySeason.total}경기)`;
+    }
 
     function updateSortIndicators() {
       const headers = document.querySelectorAll("#rosterTable th[data-sort-key]");
@@ -105,6 +114,7 @@
 
     async function init() {
       allRecords = await loadJSON("data_roster.json");
+      renderHeaderLabels(countTeamGamesBySeason(allRecords));
       applyFilterAndRender();
 
       document.getElementById("filterForm").addEventListener("submit", (e) => {

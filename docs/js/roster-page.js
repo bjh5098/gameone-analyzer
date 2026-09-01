@@ -17,4 +17,19 @@ function groupByPlayer(records) {
   return map;
 }
 
-export { groupByPlayer, SEASONS };
+function countTeamGamesBySeason(records) {
+  const bySeasonGames = new Map();
+  for (const season of SEASONS) bySeasonGames.set(season, new Set());
+  const allGames = new Set();
+  for (const record of records) {
+    allGames.add(record.game_idx);
+    if (bySeasonGames.has(record.season)) {
+      bySeasonGames.get(record.season).add(record.game_idx);
+    }
+  }
+  const result = { total: allGames.size };
+  for (const season of SEASONS) result[season] = bySeasonGames.get(season).size;
+  return result;
+}
+
+export { groupByPlayer, countTeamGamesBySeason, SEASONS };

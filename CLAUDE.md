@@ -86,7 +86,7 @@ for inning in 1..N:
 
 ## 데이터 소스 (현재 저장된 파일)
 
-- 전체 대상 경기 URL 목록: [`games.md`](./games.md) (2024~2026시즌, 95경기, 몰수/기권 경기 제외)
+- 전체 대상 경기 URL 목록: [`games.md`](./games.md) (2024~2026시즌, 100경기, 몰수/기권 경기 제외)
 - 경기별 메타데이터(연도/날짜/리그/구장/상대팀/스코어): [`games_meta.csv`](./games_meta.csv)
   - `club/info/schedule/result?season={year}&club_idx=31993&...&page={n}` 목록 페이지에서 추출
   - **구장명 표기 불일치 주의**: `구의 야구장`/`구의야구장`, `살곶이 야구장`/`살곶이야구장` 등 공백 유무가
@@ -94,7 +94,7 @@ for inning in 1..N:
   - 이 CSV에 있는 리그 목록: 일요 싱글, 일요메이져, 일요리그(C조), 수요 야간, 일요 3부, 원외리그,
     서울시민리그(S-리그), 생활체육서울시민리그, 디비전 6-강남구, 성동구청장기 야구대회,
     친선경기, 그 외 대회성 리그 소수
-- 95경기 원문 HTML: `data/raw/{game_idx}.html` (로컬 캐시, `.gitignore`에 포함되어 git에는 없음 —
+- 100경기 원문 HTML: `data/raw/{game_idx}.html` (로컬 캐시, `.gitignore`에 포함되어 git에는 없음 —
   재수집하려면 `scripts/fetch_all.py` 실행)
 - 파싱·시뮬레이션 결과: `data/gameone.db` (SQLite, `.gitignore`에 포함 — `scripts/build_db.py`로 재생성)
 - 정적 사이트용 JSON: [`docs/data_batter.json`](./docs/data_batter.json),

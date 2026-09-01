@@ -93,7 +93,7 @@ https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=16757
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1676373
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1676422
 
-### 2026시즌 (21경기)
+### 2026시즌 (26경기)
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1685360
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1685393
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1685398
@@ -105,7 +105,9 @@ https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=16854
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689334
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689339
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689344
+https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689356
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689359
+https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1689375
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1697072
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1697119
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1697143
@@ -113,5 +115,8 @@ https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=16971
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1697226
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1698117
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1698139
+https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1698151
+https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1698181
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1707338
 https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1707342
+https://www.gameone.kr/club/info/schedule/boxscore?club_idx=31993&game_idx=1717948

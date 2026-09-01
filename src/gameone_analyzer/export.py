@@ -2,6 +2,7 @@ import math
 import sqlite3
 
 from gameone_analyzer.events import classify, EventType
+from gameone_analyzer.parser import parse_batter_rows, parse_pitcher_rows
 from gameone_analyzer.stats import runner_state_key
 
 FRACTION_MAP = {"⅓": 1 / 3, "⅔": 2 / 3}
@@ -150,3 +151,20 @@ def export_all_plate_appearances(conn: sqlite3.Connection) -> list:
             "is_gidp": is_gidp(events_codes),
         })
     return records
+
+
+def collect_appearance_names(html: str, our_side: str) -> dict:
+    """{player_name: {"is_batter": bool, "is_pitcher": bool}} for our team's
+    box-score rows in one game. Uses the raw batter/pitcher tables (not the
+    plate-appearance simulation), so a defensive-only substitute with no
+    plate appearance still counts as having appeared."""
+    names = {}
+    for row in parse_batter_rows(html):
+        if row.team != our_side:
+            continue
+        names.setdefault(row.name, {"is_batter": False, "is_pitcher": False})["is_batter"] = True
+    for row in parse_pitcher_rows(html):
+        if row.team != our_side:
+            continue
+        names.setdefault(row.name, {"is_batter": False, "is_pitcher": False})["is_pitcher"] = True
+    return names

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>출장 현황 - D-Dogs OB</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav>
+      <a href="index.html" class="brand">D-Dogs OB Stats</a>
+      <a href="index.html">홈</a>
+      <a href="batter.html">타자 분석</a>
+      <a href="pitcher.html">투수 분석</a>
+      <a href="roster.html" class="active">출장 현황</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>출장 현황</h1>
+    <p class="lede">게임원 기록지(박스스코어)에 이름이 오른 경기 수 기준 — 투수/타자 상관없이
+      대수비만 들어간 경기도 1경기로 집계, 같은 경기에 투타 모두 나와도 중복 집계하지 않습니다.
+      단, 게임원 기록지에 안 잡히는 출석(오프라인 참석했지만 경기에 못 나온 경우)은 포함되지 않습니다.</p>
+  </section>
+
+  <form id="filterForm">
+    <fieldset>
+      <legend>시즌</legend>
+      <label><input type="checkbox" name="season" value="2024" /> 2024</label>
+      <label><input type="checkbox" name="season" value="2025" /> 2025</label>
+      <label><input type="checkbox" name="season" value="2026" /> 2026</label>
+      <span>(선택 없으면 전체 시즌 합산)</span>
+    </fieldset>
+    <button type="submit">필터 적용</button>
+  </form>
+
+  <div class="stat-controls">
+    <label for="minGamesInput">최소 경기수</label>
+    <input type="number" id="minGamesInput" min="0" step="1" value="0" style="width: 4rem;" />
+    <span>(이 값 이상인 선수만 표시 · 컬럼 헤더 클릭 시 정렬)</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="rosterTable">
+      <thead>
+        <tr>
+          <th data-sort-key="name">선수</th>
+          <th data-sort-key="2024">2024</th>
+          <th data-sort-key="2025">2025</th>
+          <th data-sort-key="2026">2026</th>
+          <th data-sort-key="total">총 경기수</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    import { loadJSON } from "./js/data-loader.js";
+    import { groupByPlayer, SEASONS } from "./js/roster-page.js";
+    import { sortEntries, nextSortState } from "./js/table-sort.js";
+
+    let allRecords = [];
+    let sortState = { key: "total", direction: "desc" };
+
+    function updateSortIndicators() {
+      const headers = document.querySelectorAll("#rosterTable th[data-sort-key]");
+      for (const th of headers) {
+        th.classList.remove("sorted-asc", "sorted-desc");
+        if (th.dataset.sortKey === sortState.key) {
+          th.classList.add(sortState.direction === "asc" ? "sorted-asc" : "sorted-desc");
+        }
+      }
+    }
+
+    function renderTable(byPlayer, minGames) {
+      const tbody = document.querySelector("#rosterTable tbody");
+      tbody.innerHTML = "";
+      const filtered = Array.from(byPlayer.entries()).filter(([, stats]) => stats.total >= minGames);
+      const sorted = sortEntries(filtered, sortState.key, sortState.direction);
+      updateSortIndicators();
+      for (const [name, stats] of sorted) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${name}</td>
+          ${SEASONS.map((s) => `<td>${stats[s]}</td>`).join("")}
+          <td>${stats.total}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function applyFilterAndRender() {
+      const form = document.getElementById("filterForm");
+      const selectedSeasons = Array.from(form.querySelectorAll('input[name="season"]:checked')).map((el) =>
+        parseInt(el.value, 10)
+      );
+      const filtered = selectedSeasons.length
+        ? allRecords.filter((r) => selectedSeasons.includes(r.season))
+        : allRecords;
+      const minGames = parseInt(document.getElementById("minGamesInput").value, 10) || 0;
+      renderTable(groupByPlayer(filtered), minGames);
+    }
+
+    async function init() {
+      allRecords = await loadJSON("data_roster.json");
+      applyFilterAndRender();
+
+      document.getElementById("filterForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        applyFilterAndRender();
+      });
+      document.getElementById("minGamesInput").addEventListener("input", applyFilterAndRender);
+
+      document.querySelectorAll("#rosterTable th[data-sort-key]").forEach((th) => {
+        th.addEventListener("click", () => {
+          sortState = nextSortState(sortState, th.dataset.sortKey);
+          applyFilterAndRender();
+        });
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
